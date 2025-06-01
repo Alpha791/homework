@@ -124,21 +124,6 @@
   }
 </script>
 
-PrivacyGuard Report:
----------------------
-Status: Active
-Trackers Blocked: meter.track, usage.monitor, isp.billing
-Network Intercept: Enabled
-Timestamp: ${timestamp}
-      `;
-      const blob = new Blob([report], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'PrivacyGuard_Report.txt';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
   </script>
 </body>
 </html>
