@@ -10,30 +10,33 @@
       background: #121212;
       color: white;
       padding: 20px;
+      margin: 0;
     }
     .warning {
       color: #ff5555;
       margin-top: 10px;
     }
     button {
-      padding: 15px 25px;
+      padding: 10px 20px;
       margin-top: 20px;
       background: #00b894;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 16px;
-      width: 100%;
-      max-width: 300px;
     }
     button:hover {
       background: #019875;
     }
-    @media (hover: none) {
-      button:hover {
-        background: #00b894;
-      }
+    .log {
+      background: #1e1e1e;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      max-height: 300px;
+      overflow-y: auto;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -43,7 +46,9 @@
 
   <button type="button" onclick="activateShield()">Activate Privacy Shield</button>
   <button type="button" onclick="downloadReport()">Download Protection Report</button>
+  
   <div class="warning" id="status"></div>
+  <div class="log" id="activityLog">[Waiting for activation...]</div>
 
   <script>
     (function secureApp() {
@@ -58,9 +63,19 @@
       }
     })();
 
+    let logEntries = [];
+
+    function logActivity(message) {
+      const log = document.getElementById("activityLog");
+      const timestamp = new Date().toLocaleTimeString();
+      const entry = `[${timestamp}] ${message}`;
+      logEntries.push(entry);
+      log.innerText = logEntries.join('\n');
+    }
+
     function activateShield() {
       const status = document.getElementById("status");
-      status.innerText = "Shield activated: Monitoring blocked.";
+      status.innerText = "✅ Shield activated: Monitoring blocked.";
 
       const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
 
@@ -71,7 +86,7 @@
               if (node.tagName === "SCRIPT" && node.src) {
                 for (const block of blockList) {
                   if (node.src.includes(block)) {
-                    console.warn("Blocked script:", node.src);
+                    logActivity(`Blocked external script: ${node.src}`);
                     node.remove();
                   }
                 }
@@ -80,47 +95,42 @@
           }
         });
         observer.observe(document, { childList: true, subtree: true });
+        logActivity("MutationObserver enabled and scanning for trackers...");
       } else {
-        console.warn("MutationObserver not supported on this device.");
+        logActivity("⚠️ MutationObserver not supported on this device.");
       }
 
       const originalFetch = window.fetch;
       window.fetch = (...args) => {
         if (args[0].toString().includes("isp-monitoring")) {
-          console.warn("Blocked fetch to:", args[0]);
-          return new Promise(() => {}); // Prevent resolve
+          logActivity(`Blocked fetch request to: ${args[0]}`);
+          return new Promise(() => {}); // Block forever
         }
         return originalFetch(...args);
       };
+
+      logActivity("Privacy Shield is now active.");
     }
 
     function downloadReport() {
       const timestamp = new Date().toISOString();
       const report = 
-`PrivacyGuard Protection Report:
+`PrivacyGuard Protection Report
 ------------------------------
 Status: Active
-Blocked Trackers: meter.track, usage.monitor, isp.billing
-Monitoring Requests: Blocked via fetch interception
-Scripts: Monitored via MutationObserver
 Timestamp: ${timestamp}
+
+Activity Log:
+${logEntries.join('\n')}
 `;
 
-      try {
-        const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "PrivacyGuard_Protection_Report.txt";
-        link.target = "_blank";
-        link.rel = "noopener";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      } catch (e) {
-        alert("Download not supported on this browser. Try using Chrome or Firefox.");
-      }
+      const blob = new Blob([report], { type: "text/plain" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "PrivacyGuard_Protection_Report.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
   </script>
 </body>
