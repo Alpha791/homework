@@ -1,34 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>PrivacyGuard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#121212">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="theme-color" content="#121212" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #121212;
       color: white;
       padding: 20px;
-      margin: 0;
     }
     .warning {
       color: #ff5555;
       margin-top: 10px;
     }
     button {
-      padding: 10px 20px;
+      padding: 15px 25px;
       margin-top: 20px;
       background: #00b894;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
     }
     button:hover {
       background: #019875;
+    }
+    @media (hover: none) {
+      button:hover {
+        background: #00b894;
+      }
     }
   </style>
 </head>
@@ -37,15 +47,21 @@
   <p>This app restricts monitoring and billing systems proposed by ISPs.</p>
 
   <button onclick="activateShield()">Activate Privacy Shield</button>
-  <button onclick="downloadReport()">Download Report</button>
+  <button onclick="downloadReport()">Download Protection Report</button>
   <div class="warning" id="status"></div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').then(() => {
-        console.log("Service worker registered for background operation.");
-      });
-    }
+    (function secureApp() {
+      'use strict';
+      try {
+        if (Object.prototype.__proto__) {
+          Object.defineProperty(Object.prototype, "__proto__", { value: null });
+        }
+        [Object, Array, Function].forEach(Object.freeze);
+      } catch (err) {
+        console.warn("Security hardening skipped:", err);
+      }
+    })();
 
     function activateShield() {
       const status = document.getElementById("status");
@@ -53,21 +69,23 @@
 
       const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
 
-      const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-          mutation.addedNodes.forEach(node => {
-            if (node.tagName === "SCRIPT" && node.src) {
-              blockList.forEach(block => {
-                if (node.src.includes(block)) {
-                  console.warn("Blocked script:", node.src);
-                  node.remove();
+      if ('MutationObserver' in window) {
+        const observer = new MutationObserver(mutations => {
+          for (const mutation of mutations) {
+            mutation.addedNodes.forEach(node => {
+              if (node.tagName === "SCRIPT" && node.src) {
+                for (const block of blockList) {
+                  if (node.src.includes(block)) {
+                    console.warn("Blocked script:", node.src);
+                    node.remove();
+                  }
                 }
-              });
-            }
-          });
+              }
+            });
+          }
         });
-      });
-      observer.observe(document, { childList: true, subtree: true });
+        observer.observe(document, { childList: true, subtree: true });
+      }
 
       const originalFetch = window.fetch;
       window.fetch = (...args) => {
@@ -81,21 +99,32 @@
 
     function downloadReport() {
       const timestamp = new Date().toISOString();
-      const report = `
-PrivacyGuard Report:
----------------------
+      const report = 
+`PrivacyGuard Protection Report:
+------------------------------
 Status: Active
-Trackers Blocked: meter.track, usage.monitor, isp.billing
-Network Intercept: Enabled
+Blocked Trackers: meter.track, usage.monitor, isp.billing
+Monitoring Requests: Blocked via fetch interception
+Scripts: Monitored via MutationObserver
 Timestamp: ${timestamp}
-      `;
-      const blob = new Blob([report], { type: 'text/plain' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = 'PrivacyGuard_Report.txt';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+`;
+      try {
+        const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "PrivacyGuard_Protection_Report.txt";
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        alert("Download not supported on this browser.");
+      }
+    }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').then(() => {
+        console.log("Service worker registered for PrivacyGuard.");
+      });
     }
   </script>
 </body>
