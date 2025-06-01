@@ -50,7 +50,28 @@
 <body>
   <h1>Frigates Launcher</h1>
   <p>Android 14 compatible launcher with hide app feature. Works year-round in the background.</p>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.frigates.launcher">
 
+    <application
+        android:allowBackup="true"
+        android:label="Frigates Launcher"
+        android:icon="@mipmap/ic_launcher"
+        android:theme="@style/Theme.Launcher">
+        <activity android:name=".MainActivity"
+            android:exported="true"
+            android:label="Frigates Launcher"
+            android:theme="@style/Theme.Launcher">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+                  
   <button onclick="downloadAPK()">Download APK</button>
 
   <footer>
