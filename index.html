@@ -6,72 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#121212">
   <style>
-    body {
-      background-color: #121212;
-      color: #ffffff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px 20px;
-      margin: 0;
-    }
-
-    h1 {
-      font-size: 2em;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background-color: #00b894;
-      border: none;
-      color: white;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #019875;
-    }
-
-    footer {
-      margin-top: 50px;
-      font-size: 0.9em;
-      color: #bbbbbb;
-    }
+    /* ... your styles ... */
   </style>
 </head>
 <body>
   <h1>Frigates Launcher</h1>
   <p>Android 14 compatible launcher with hide app feature. Works year-round in the background.</p>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.frigates.launcher">
 
-    <application
-        android:allowBackup="true"
-        android:label="Frigates Launcher"
-        android:icon="@mipmap/ic_launcher"
-        android:theme="@style/Theme.Launcher">
-        <activity android:name=".MainActivity"
-            android:exported="true"
-            android:label="Frigates Launcher"
-            android:theme="@style/Theme.Launcher">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
-</manifest>
-                  
   <button onclick="downloadAPK()">Download APK</button>
 
   <footer>
@@ -80,8 +21,7 @@
 
   <script>
     function downloadAPK() {
-      // Ensure the APK file is uploaded to your GitHub repo and update the link below
-      window.location.href = "FrigatesLauncher.apk";
+      window.location.href = "FrigatesLauncher.apk"; // Update this if needed
     }
   </script>
 </body>
