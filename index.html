@@ -1,152 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>PrivacyGuard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <meta name="theme-color" content="#121212" />
-  <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta charset="UTF-8">
+  <title>Download Frigates Launcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#121212">
   <style>
     body {
+      background-color: #121212;
+      color: #ffffff;
       font-family: Arial, sans-serif;
-      background: #121212;
-      color: white;
-      padding: 20px;
+      text-align: center;
+      padding: 50px 20px;
+      margin: 0;
     }
-    .warning {
-      color: #ff5555;
-      margin-top: 10px;
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
     }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
     button {
-      padding: 15px 25px;
-      margin-top: 20px;
-      background: #00b894;
-      color: white;
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #00b894;
       border: none;
+      color: white;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
-      width: 100%;
-      max-width: 300px;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background: #019875;
+      background-color: #019875;
     }
-    @media (hover: none) {
-      button:hover {
-        background: #00b894;
-      }
+
+    footer {
+      margin-top: 50px;
+      font-size: 0.9em;
+      color: #bbbbbb;
     }
   </style>
 </head>
 <body>
-  <h1>PrivacyGuard</h1>
-  <p>This app restricts monitoring and billing systems proposed by ISPs.</p>
+  <h1>Frigates Launcher</h1>
+  <p>Android 14 compatible launcher with hide app feature. Works year-round in the background.</p>
 
-  <button onclick="activateShield()">Activate Privacy Shield</button>
-  <button onclick="downloadReport()">Download Protection Report</button>
-  <div class="warning" id="status"></div>
+  <button onclick="downloadAPK()">Download APK</button>
+
+  <footer>
+    <p>&copy; 2025 Frigates Software. All rights reserved.</p>
+  </footer>
 
   <script>
-    (function secureApp() {
-      'use strict';
-      try {
-        if (Object.prototype.__proto__) {
-          Object.defineProperty(Object.prototype, "__proto__", { value: null });
-        }
-        [Object, Array, Function].forEach(Object.freeze);
-      } catch (err) {
-        console.warn("Security hardening skipped:", err);
-      }
-    })();
-
-    function activateShield() {
-      const status = document.getElementById("status");
-      status.innerText = "Shield activated: Monitoring blocked and location spoofed to Moscow, Russia.";
-
-      const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
-
-      if ('MutationObserver' in window) {
-        const observer = new MutationObserver(mutations => {
-          for (const mutation of mutations) {
-            mutation.addedNodes.forEach(node => {
-              if (node.tagName === "SCRIPT" && node.src) {
-                for (const block of blockList) {
-                  if (node.src.includes(block)) {
-                    console.warn("Blocked script:", node.src);
-                    node.remove();
-                  }
-                }
-              }
-            });
-          }
-        });
-        observer.observe(document, { childList: true, subtree: true });
-      }
-
-      const originalFetch = window.fetch;
-      window.fetch = (...args) => {
-        if (args[0].toString().includes("isp-monitoring")) {
-          console.warn("Blocked fetch to:", args[0]);
-          return new Promise(() => {});
-        }
-        return originalFetch(...args);
-      };
-
-      // 🌍 MOCK GEOLOCATION TO MOSCOW, RUSSIA
-      if ('geolocation' in navigator) {
-        const fakeCoords = {
-          latitude: 55.7558,
-          longitude: 37.6173,
-          accuracy: 50
-        };
-
-        navigator.geolocation.getCurrentPosition = function (success, error, options) {
-          console.warn("PrivacyGuard: Mocking geolocation to Moscow, Russia.");
-          success({ coords: fakeCoords, timestamp: Date.now() });
-        };
-
-        navigator.geolocation.watchPosition = function (success, error, options) {
-          console.warn("PrivacyGuard: Watching mock position.");
-          const id = Math.floor(Math.random() * 1000);
-          success({ coords: fakeCoords, timestamp: Date.now() });
-          return id;
-        };
-      }
-    }
-
-    function downloadReport() {
-      const timestamp = new Date().toISOString();
-      const report = 
-`PrivacyGuard Protection Report:
-------------------------------
-Status: Active
-Blocked Trackers: meter.track, usage.monitor, isp.billing
-Monitoring Requests: Blocked via fetch interception
-Scripts: Monitored via MutationObserver
-Mocked Location: Moscow, Russia
-Timestamp: ${timestamp}
-`;
-      try {
-        const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "PrivacyGuard_Protection_Report.txt";
-        link.click();
-        URL.revokeObjectURL(url);
-      } catch (e) {
-        alert("Download not supported on this browser.");
-      }
-    }
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').then(() => {
-        console.log("Service worker registered for PrivacyGuard.");
-      });
+    function downloadAPK() {
+      // Ensure the APK file is uploaded to your GitHub repo and update the link below
+      window.location.href = "FrigatesLauncher.apk";
     }
   </script>
 </body>
