@@ -1,102 +1,1065 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Frigates Classroom Chat</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      background: #2c3e50;
-      color: white;
-      padding: 10px 20px;
-      text-align: center;
-    }
-    #chat-container {
-      flex: 1;
-      padding: 10px;
-      overflow-y: auto;
-    }
-    .message {
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 8px;
-      max-width: 75%;
-    }
-    .teacher {
-      background-color: #3498db;
-      color: white;
-      align-self: flex-start;
-    }
-    .student {
-      background-color: #2ecc71;
-      color: white;
-      align-self: flex-end;
-    }
-    #input-container {
-      display: flex;
-      padding: 10px;
-      background: #ecf0f1;
-    }
-    input[type="text"] {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      margin-left: 10px;
-      padding: 10px 15px;
-      background-color: #2980b9;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #1f6391;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frigates Homework Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --teacher: #7209b7;
+            --student: #3a86ff;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f9fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .logo i {
+            color: var(--success);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary:hover {
+            background-color: #3ab4d9;
+        }
+        
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(63, 55, 201, 0.9)), url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        .btn-lg {
+            padding: 12px 30px;
+            font-size: 1.1rem;
+        }
+        
+        .features {
+            padding: 60px 0;
+            background-color: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .feature-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .dashboard {
+            padding: 40px 0;
+            display: none;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .role-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .teacher-badge {
+            background-color: rgba(114, 9, 183, 0.1);
+            color: var(--teacher);
+        }
+        
+        .student-badge {
+            background-color: rgba(58, 134, 255, 0.1);
+            color: var(--student);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            padding: 20px;
+            background-color: var(--light);
+            border-bottom: 1px solid var(--light-gray);
+            font-weight: 600;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .assignment-list {
+            list-style: none;
+        }
+        
+        .assignment-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .assignment-item:last-child {
+            border-bottom: none;
+        }
+        
+        .assignment-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .assignment-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        .assignment-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.9rem;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .login-container, .register-container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: none;
+        }
+        
+        .form-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+        
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .switch-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links, .auth-buttons {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                padding: 60px 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .assignment-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .assignment-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+        
+        /* Mobile menu */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            padding: 20px;
+        }
+        
+        .mobile-nav.active {
+            right: 0;
+        }
+        
+        .mobile-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .close-menu {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mobile-nav-links {
+            list-style: none;
+        }
+        
+        .mobile-nav-links li {
+            margin-bottom: 15px;
+        }
+        
+        .mobile-nav-links a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 500;
+            display: block;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .mobile-nav-links a:hover, .mobile-nav-links a.active {
+            background: var(--light);
+        }
+        
+        .mobile-auth-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        /* Overlay for mobile menu */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 4px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .toast.success {
+            background-color: var(--success);
+        }
+        
+        .toast.error {
+            background-color: var(--danger);
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h2>Frigates Chat Room</h2>
-    <p>Teacher & Student Communication</p>
-  </header>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-ship"></i>
+                    <span>Frigates Homework Portal</span>
+                </div>
+                <nav class="nav-links">
+                    <a href="#" class="nav-link active">Home</a>
+                    <a href="#" class="nav-link">Features</a>
+                    <a href="#" class="nav-link">About</a>
+                    <a href="#" class="nav-link">Contact</a>
+                </nav>
+                <div class="auth-buttons">
+                    <button class="btn btn-outline" id="loginBtn">Login</button>
+                    <button class="btn btn-primary" id="registerBtn">Register</button>
+                </div>
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
 
-  <div id="chat-container"></div>
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+            <div class="logo">
+                <i class="fas fa-ship"></i>
+                <span>Frigates</span>
+            </div>
+            <button class="close-menu" id="closeMenuBtn">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="mobile-auth-buttons">
+            <button class="btn btn-outline" id="mobileLoginBtn">Login</button>
+            <button class="btn btn-primary" id="mobileRegisterBtn">Register</button>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
 
-  <div id="input-container">
-    <input type="text" id="messageInput" placeholder="Type your message here...">
-    <button onclick="sendMessage()">Send</button>
-  </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Transform the Way You Teach and Learn</h1>
+            <p>Frigates Homework Portal connects teachers and students in a seamless, secure environment. Assign homework, submit responses, and track progress - all in one place.</p>
+            <button class="btn btn-primary btn-lg" id="heroLoginBtn">Get Started</button>
+        </div>
+    </section>
 
-  <script>
-    const chatContainer = document.getElementById('chat-container');
-    const messageInput = document.getElementById('messageInput');
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3>Teacher Dashboard</h3>
+                    <p>Easily create and manage assignments, track student submissions, and provide feedback.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Student Portal</h3>
+                    <p>View assignments, submit your work securely, and receive feedback privately.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>Student submissions are private and only visible to the teacher and the student.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access the platform from any device with a responsive design that works everywhere.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>High Performance</h3>
+                    <p>Built to handle multiple teachers and hundreds of students with ease.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h3>Notifications</h3>
+                    <p>Get notified about new assignments, submissions, and feedback.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    function sendMessage() {
-      const text = messageInput.value.trim();
-      if (text === '') return;
+    <!-- Login Form -->
+    <div class="login-container" id="loginContainer">
+        <h2 class="form-title">Login to Your Account</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="loginEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="loginPassword" required>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="rememberMe"> Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            <div class="switch-form">
+                Don't have an account? <a class="switch-link" id="switchToRegister">Register</a>
+            </div>
+        </form>
+    </div>
 
-      const isTeacher = confirm("Are you the teacher? Press OK for teacher, Cancel for student.");
-      const messageEl = document.createElement('div');
-      messageEl.classList.add('message', isTeacher ? 'teacher' : 'student');
-      messageEl.textContent = (isTeacher ? "Teacher: " : "Student: ") + text;
+    <!-- Register Form -->
+    <div class="register-container" id="registerContainer">
+        <h2 class="form-title">Create an Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="registerName" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="registerEmail" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" id="registerPassword" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="registerConfirmPassword" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">I am a:</label>
+                <div>
+                    <label>
+                        <input type="radio" name="role" value="teacher" checked> Teacher
+                    </label>
+                    <label style="margin-left: 20px;">
+                        <input type="radio" name="role" value="student"> Student
+                    </label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Register</button>
+            <div class="switch-form">
+                Already have an account? <a class="switch-link" id="switchToLogin">Login</a>
+            </div>
+        </form>
+    </div>
 
-      chatContainer.appendChild(messageEl);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-      messageInput.value = '';
-    }
-  </script>
+    <!-- Dashboard -->
+    <section class="dashboard" id="dashboard">
+        <div class="container">
+            <div class="dashboard-header">
+                <h2>Welcome, <span id="userName">Alex Morgan</span></h2>
+                <div class="role-badge teacher-badge" id="roleBadge">
+                    <i class="fas fa-chalkboard-teacher"></i> Teacher
+                </div>
+            </div>
+
+            <div class="teacher-dashboard" id="teacherDashboard">
+                <!-- Create Assignment -->
+                <div class="card">
+                    <div class="card-header">Create New Assignment</div>
+                    <div class="card-body">
+                        <form id="assignmentForm">
+                            <div class="form-group">
+                                <label class="form-label">Assignment Title</label>
+                                <input type="text" class="form-control" id="assignmentTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-control" id="assignmentDescription" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Due Date</label>
+                                <input type="date" class="form-control" id="assignmentDueDate" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Assignment</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Assignments List -->
+                <div class="card">
+                    <div class="card-header">Current Assignments</div>
+                    <div class="card-body">
+                        <ul class="assignment-list" id="teacherAssignments">
+                            <li class="assignment-item">
+                                <div>
+                                    <div class="assignment-title">History Essay: The Industrial Revolution</div>
+                                    <div class="assignment-meta">
+                                        <span><i class="far fa-calendar-alt"></i> Due: 15 Dec 2023</span>
+                                        <span><i class="fas fa-users"></i> 24 Submissions</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-primary btn-sm">View</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </div>
+                            </li>
+                            <li class="assignment-item">
+                                <div>
+                                    <div class="assignment-title">Math Problems: Quadratic Equations</div>
+                                    <div class="assignment-meta">
+                                        <span><i class="far fa-calendar-alt"></i> Due: 18 Dec 2023</span>
+                                        <span><i class="fas fa-users"></i> 18 Submissions</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-primary btn-sm">View</button>
+                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="student-dashboard" id="studentDashboard">
+                <!-- Student Assignments -->
+                <div class="card">
+                    <div class="card-header">Your Assignments</div>
+                    <div class="card-body">
+                        <ul class="assignment-list" id="studentAssignments">
+                            <li class="assignment-item">
+                                <div>
+                                    <div class="assignment-title">History Essay: The Industrial Revolution</div>
+                                    <div class="assignment-meta">
+                                        <span><i class="far fa-calendar-alt"></i> Due: 15 Dec 2023</span>
+                                        <span><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Submitted</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-primary btn-sm">View</button>
+                                </div>
+                            </li>
+                            <li class="assignment-item">
+                                <div>
+                                    <div class="assignment-title">Math Problems: Quadratic Equations</div>
+                                    <div class="assignment-meta">
+                                        <span><i class="far fa-calendar-alt"></i> Due: 18 Dec 2023</span>
+                                        <span><i class="fas fa-exclamation-circle" style="color: #FF9800;"></i> Pending</span>
+                                    </div>
+                                </div>
+                                <div class="assignment-actions">
+                                    <button class="btn btn-warning btn-sm">Submit</button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Frigates Homework Portal</h3>
+                    <p>Connecting teachers and students in a seamless, secure environment for better learning outcomes.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Features</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Teacher Guide</a></li>
+                        <li><a href="#">Student Handbook</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Support Center</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-envelope"></i> support@frigates.edu</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Education Street, Campus City</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Frigates Homework Portal. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // DOM Elements
+        const loginBtn = document.getElementById('loginBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const mobileRegisterBtn = document.getElementById('mobileRegisterBtn');
+        const heroLoginBtn = document.getElementById('heroLoginBtn');
+        const loginContainer = document.getElementById('loginContainer');
+        const registerContainer = document.getElementById('registerContainer');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const dashboard = document.getElementById('dashboard');
+        const teacherDashboard = document.getElementById('teacherDashboard');
+        const studentDashboard = document.getElementById('studentDashboard');
+        const roleBadge = document.getElementById('roleBadge');
+        const userName = document.getElementById('userName');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const overlay = document.getElementById('overlay');
+        const toast = document.getElementById('toast');
+        const assignmentForm = document.getElementById('assignmentForm');
+
+        // Show login form
+        function showLogin() {
+            loginContainer.style.display = 'block';
+            registerContainer.style.display = 'none';
+            dashboard.style.display = 'none';
+            closeMobileMenu();
+        }
+
+        // Show register form
+        function showRegister() {
+            registerContainer.style.display = 'block';
+            loginContainer.style.display = 'none';
+            dashboard.style.display = 'none';
+            closeMobileMenu();
+        }
+
+        // Show dashboard based on role
+        function showDashboard(role, name) {
+            dashboard.style.display = 'block';
+            loginContainer.style.display = 'none';
+            registerContainer.style.display = 'none';
+            
+            userName.textContent = name;
+            
+            if (role === 'teacher') {
+                teacherDashboard.style.display = 'block';
+                studentDashboard.style.display = 'none';
+                roleBadge.className = 'role-badge teacher-badge';
+                roleBadge.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> Teacher';
+            } else {
+                teacherDashboard.style.display = 'none';
+                studentDashboard.style.display = 'block';
+                roleBadge.className = 'role-badge student-badge';
+                roleBadge.innerHTML = '<i class="fas fa-user-graduate"></i> Student';
+            }
+        }
+
+        // Show toast notification
+        function showToast(message, type) {
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            
+            setTimeout(() => {
+                toast.className = 'toast';
+            }, 3000);
+        }
+
+        // Open mobile menu
+        function openMobileMenu() {
+            mobileNav.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        // Close mobile menu
+        function closeMobileMenu() {
+            mobileNav.classList.remove('active');
+            overlay.classList.remove('active');
+        }
+
+        // Event Listeners
+        loginBtn.addEventListener('click', showLogin);
+        registerBtn.addEventListener('click', showRegister);
+        mobileLoginBtn.addEventListener('click', showLogin);
+        mobileRegisterBtn.addEventListener('click', showRegister);
+        heroLoginBtn.addEventListener('click', showLogin);
+        switchToRegister.addEventListener('click', showRegister);
+        switchToLogin.addEventListener('click', showLogin);
+        mobileMenuBtn.addEventListener('click', openMobileMenu);
+        closeMenuBtn.addEventListener('click', closeMobileMenu);
+        overlay.addEventListener('click', closeMobileMenu);
+
+        // Login form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Simulate authentication
+            if (email && password) {
+                // Determine role based on email for demo purposes
+                const role = email.includes('teacher') ? 'teacher' : 'student';
+                const name = email.split('@')[0].replace('.', ' ');
+                
+                showDashboard(role, name);
+                showToast('Login successful!', 'success');
+                
+                // Simulate saving credentials
+                if (rememberMe) {
+                    localStorage.setItem('userEmail', email);
+                    localStorage.setItem('userPassword', password);
+                }
+            } else {
+                showToast('Please enter email and password', 'error');
+            }
+        });
+
+        // Register form submission
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('registerName').value;
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('registerConfirmPassword').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            if (password !== confirmPassword) {
+                showToast('Passwords do not match', 'error');
+                return;
+            }
+            
+            if (name && email && password) {
+                showDashboard(role, name);
+                showToast('Registration successful!', 'success');
+            } else {
+                showToast('Please fill all fields', 'error');
+            }
+        });
+
+        // Assignment form submission
+        assignmentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('assignmentTitle').value;
+            const description = document.getElementById('assignmentDescription').value;
+            const dueDate = document.getElementById('assignmentDueDate').value;
+            
+            if (title && description && dueDate) {
+                // Add to assignments list
+                const assignmentsList = document.getElementById('teacherAssignments');
+                const dueDateFormatted = new Date(dueDate).toLocaleDateString('en-US', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+                
+                const assignmentItem = document.createElement('li');
+                assignmentItem.className = 'assignment-item';
+                assignmentItem.innerHTML = `
+                    <div>
+                        <div class="assignment-title">${title}</div>
+                        <div class="assignment-meta">
+                            <span><i class="far fa-calendar-alt"></i> Due: ${dueDateFormatted}</span>
+                            <span><i class="fas fa-users"></i> 0 Submissions</span>
+                        </div>
+                    </div>
+                    <div class="assignment-actions">
+                        <button class="btn btn-primary btn-sm">View</button>
+                        <button class="btn btn-danger btn-sm">Delete</button>
+                    </div>
+                `;
+                
+                assignmentsList.prepend(assignmentItem);
+                
+                // Reset form
+                assignmentForm.reset();
+                
+                showToast('Assignment created successfully!', 'success');
+            } else {
+                showToast('Please fill all fields', 'error');
+            }
+        });
+
+        // Check for saved credentials on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedEmail = localStorage.getItem('userEmail');
+            const savedPassword = localStorage.getItem('userPassword');
+            
+            if (savedEmail && savedPassword) {
+                document.getElementById('loginEmail').value = savedEmail;
+                document.getElementById('loginPassword').value = savedPassword;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+    </script>
 </body>
 </html>
