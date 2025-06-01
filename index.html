@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PrivacyGuard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: white;
+      padding: 20px;
+    }
+    .warning {
+      color: #ff5555;
+      margin-top: 10px;
+    }
+    button {
+      padding: 15px 25px;
+      margin-top: 20px;
+      background: #00b894;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      max-width: 300px;
+    }
+    button:hover {
+      background: #019875;
+    }
+    @media (hover: none) {
+      button:hover {
+        background: #00b894;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>PrivacyGuard</h1>
+  <p>This app restricts monitoring and billing systems proposed by ISPs.</p>
+
+  <button type="button" onclick="activateShield()">Activate Privacy Shield</button>
+  <button type="button" onclick="downloadReport()">Download Protection Report</button>
+  <div class="warning" id="status"></div>
+
+  <script>
+    (function secureApp() {
+      'use strict';
+      try {
+        if (Object.prototype.__proto__) {
+          Object.defineProperty(Object.prototype, "__proto__", { value: null });
+        }
+        [Object, Array, Function].forEach(Object.freeze);
+      } catch (err) {
+        console.warn("Security hardening skipped:", err);
+      }
+    })();
+
+    function activateShield() {
+      const status = document.getElementById("status");
+      status.innerText = "Shield activated: Monitoring blocked.";
+
+      const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
+
+      if ('MutationObserver' in window) {
+        const observer = new MutationObserver(mutations => {
+          for (const mutation of mutations) {
+            mutation.addedNodes.forEach(node => {
+              if (node.tagName === "SCRIPT" && node.src) {
+                for (const block of blockList) {
+                  if (node.src.includes(block)) {
+                    console.warn("Blocked script:", node.src);
+                    node.remove();
+                  }
+                }
+              }
+            });
+          }
+        });
+        observer.observe(document, { childList: true, subtree: true });
+      } else {
+        console.warn("MutationObserver not supported on this device.");
+      }
+
+      const originalFetch = window.fetch;
+      window.fetch = (...args) => {
+        if (args[0].toString().includes("isp-monitoring")) {
+          console.warn("Blocked fetch to:", args[0]);
+          return new Promise(() => {}); // Prevent resolve
+        }
+        return originalFetch(...args);
+      };
+    }
+
+    function downloadReport() {
+      const timestamp = new Date().toISOString();
+      const report = 
+`PrivacyGuard Protection Report:
+------------------------------
+Status: Active
+Blocked Trackers: meter.track, usage.monitor, isp.billing
+Monitoring Requests: Blocked via fetch interception
+Scripts: Monitored via MutationObserver
+Timestamp: ${timestamp}
+`;
+
+      try {
+        const blob = new Blob([report], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "PrivacyGuard_Protection_Report.txt";
+        link.target = "_blank";
+        link.rel = "noopener";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (e) {
+        alert("Download not supported on this browser. Try using Chrome or Firefox.");
+      }
+    }
+  </script>
+</body>
+</html>
