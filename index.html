@@ -2,36 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Frigates Homework Portal</title>
+  <title>Frigates Classroom Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f7f9fa;
-      text-align: center;
-      padding: 50px;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    h1 {
-      color: #2c3e50;
-    }
-    p {
-      font-size: 18px;
-      margin-top: 20px;
-    }
-    a {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 10px 20px;
-      background: #2980b9;
+    header {
+      background: #2c3e50;
       color: white;
-      text-decoration: none;
-      border-radius: 5px;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    #chat-container {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+    }
+    .message {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 8px;
+      max-width: 75%;
+    }
+    .teacher {
+      background-color: #3498db;
+      color: white;
+      align-self: flex-start;
+    }
+    .student {
+      background-color: #2ecc71;
+      color: white;
+      align-self: flex-end;
+    }
+    #input-container {
+      display: flex;
+      padding: 10px;
+      background: #ecf0f1;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #1f6391;
     }
   </style>
 </head>
 <body>
-  <h1>Welcome to Frigates Homework Platform</h1>
-  <p>This is your teacher-student portal. Please sign in via the app to access assignments.</p>
-  <a href="#">Login</a>
+  <header>
+    <h2>Frigates Chat Room</h2>
+    <p>Teacher & Student Communication</p>
+  </header>
+
+  <div id="chat-container"></div>
+
+  <div id="input-container">
+    <input type="text" id="messageInput" placeholder="Type your message here...">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatContainer = document.getElementById('chat-container');
+    const messageInput = document.getElementById('messageInput');
+
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      if (text === '') return;
+
+      const isTeacher = confirm("Are you the teacher? Press OK for teacher, Cancel for student.");
+      const messageEl = document.createElement('div');
+      messageEl.classList.add('message', isTeacher ? 'teacher' : 'student');
+      messageEl.textContent = (isTeacher ? "Teacher: " : "Student: ") + text;
+
+      chatContainer.appendChild(messageEl);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      messageInput.value = '';
+    }
+  </script>
 </body>
 </html>
