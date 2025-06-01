@@ -1,28 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Download Frigates Launcher</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#121212">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Frigates Homework Platform</title>
+  <meta name="theme-color" content="#1e293b" />
   <style>
-    /* ... your styles ... */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    p {
+      font-size: 1.2em;
+      margin-bottom: 40px;
+      color: #cbd5e1;
+    }
+
+    .btn {
+      padding: 15px 30px;
+      margin: 10px;
+      font-size: 1em;
+      background-color: #0ea5e9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0284c7;
+    }
+
+    footer {
+      margin-top: 50px;
+      font-size: 0.9em;
+      color: #94a3b8;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8em;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Frigates Launcher</h1>
-  <p>Android 14 compatible launcher with hide app feature. Works year-round in the background.</p>
+  <h1>Welcome to Frigates Homework Portal</h1>
+  <p>Teachers post homework. Students respond privately. Secure. Fast. Mobile-ready.</p>
 
-  <button onclick="downloadAPK()">Download APK</button>
+  <a class="btn" href="/login">Login</a>
+  <a class="btn" href="/register">Register</a>
 
   <footer>
-    <p>&copy; 2025 Frigates Software. All rights reserved.</p>
+    <p>&copy; 2025 Frigates Platform. All rights reserved.</p>
   </footer>
-
-  <script>
-    function downloadAPK() {
-      window.location.href = "FrigatesLauncher.apk"; // Update this if needed
-    }
-  </script>
 </body>
 </html>
