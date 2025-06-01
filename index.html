@@ -4,15 +4,8 @@
   <meta charset="UTF-8">
   <title>PrivacyGuard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#121212">
-  <link rel="manifest" href="data:application/manifest+json,{
-    &quot;name&quot;: &quot;PrivacyGuard&quot;,
-    &quot;short_name&quot;: &quot;PrivacyGuard&quot;,
-    &quot;start_url&quot;: &quot;.&quot;,
-    &quot;display&quot;: &quot;standalone&quot;,
-    &quot;background_color&quot;: &quot;#121212&quot;,
-    &quot;theme_color&quot;: &quot;#00b894&quot;
-  }">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -48,39 +41,18 @@
   <div class="warning" id="status"></div>
 
   <script>
-    // Register Service Worker (inline)
     if ('serviceWorker' in navigator) {
-      const swBlob = new Blob([`
-        self.addEventListener('install', event => {
-          event.waitUntil(
-            caches.open('privacyguard-v1').then(cache => {
-              return cache.addAll(['.']);
-            })
-          );
-          self.skipWaiting();
-        });
-
-        self.addEventListener('fetch', event => {
-          event.respondWith(
-            caches.match(event.request).then(response => {
-              return response || fetch(event.request);
-            })
-          );
-        });
-      `], { type: 'application/javascript' });
-
-      const swUrl = URL.createObjectURL(swBlob);
-      navigator.serviceWorker.register(swUrl).then(() => {
-        console.log("Service Worker registered.");
+      navigator.serviceWorker.register('service-worker.js').then(() => {
+        console.log("Service worker registered for background operation.");
       });
     }
 
-    // Activate Shield
     function activateShield() {
       const status = document.getElementById("status");
       status.innerText = "Shield activated: Monitoring blocked.";
 
       const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
+
       const observer = new MutationObserver(mutations => {
         mutations.forEach(mutation => {
           mutation.addedNodes.forEach(node => {
@@ -107,23 +79,24 @@
       };
     }
 
-    // Download Protection Report
-    <script>
-  ...
-  function downloadReport() {
-    const timestamp = new Date().toISOString();
-    const report = `
-      PrivacyGuard Report:
-      ---------------------
-      Status: Active
-      ...
-    `;
-
-    const blob = new Blob([report], { type: 'text/plain' });
-    ...
-  }
-</script>
-
+    function downloadReport() {
+      const timestamp = new Date().toISOString();
+      const report = `
+PrivacyGuard Report:
+---------------------
+Status: Active
+Trackers Blocked: meter.track, usage.monitor, isp.billing
+Network Intercept: Enabled
+Timestamp: ${timestamp}
+      `;
+      const blob = new Blob([report], { type: 'text/plain' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'PrivacyGuard_Report.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>
