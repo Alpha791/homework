@@ -108,9 +108,22 @@
     }
 
     // Download Protection Report
-    function downloadReport() {
-      const timestamp = new Date().toISOString();
-      const report = `
+    <script>
+  ...
+  function downloadReport() {
+    const timestamp = new Date().toISOString();
+    const report = `
+      PrivacyGuard Report:
+      ---------------------
+      Status: Active
+      ...
+    `;
+
+    const blob = new Blob([report], { type: 'text/plain' });
+    ...
+  }
+</script>
+
 PrivacyGuard Report:
 ---------------------
 Status: Active
