@@ -1,54 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>PrivacyGuard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #121212;
       color: white;
       padding: 20px;
-      margin: 0;
+      text-align: center;
+    }
+    h1 {
+      color: #00cec9;
     }
     .warning {
-      color: #ff5555;
-      margin-top: 10px;
+      color: #ff7675;
+      margin-top: 15px;
+      font-weight: bold;
     }
-    button {
-      padding: 10px 20px;
-      margin-top: 20px;
+    button, .download-button {
+      padding: 12px 25px;
+      margin: 15px 10px;
       background: #00b894;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
+      font-size: 16px;
       cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
     }
-    button:hover {
+    button:hover, .download-button:hover {
       background: #019875;
     }
-    .log {
-      background: #1e1e1e;
-      padding: 15px;
-      margin-top: 20px;
-      border-radius: 8px;
-      font-size: 14px;
-      max-height: 300px;
-      overflow-y: auto;
-      white-space: pre-wrap;
+    .download-button {
+      background: #0984e3;
+    }
+    .download-button:hover {
+      background: #74b9ff;
     }
   </style>
 </head>
 <body>
   <h1>PrivacyGuard</h1>
-  <p>This app restricts monitoring and billing systems proposed by ISPs.</p>
+  <p>This tool protects your device from ISP tracking and billing systems.</p>
 
   <button type="button" onclick="activateShield()">Activate Privacy Shield</button>
-  <button type="button" onclick="downloadReport()">Download Protection Report</button>
-  
+  <a href="PrivacyGuard.zip" download class="download-button">📥 Download PrivacyGuard (.zip)</a>
   <div class="warning" id="status"></div>
-  <div class="log" id="activityLog">[Waiting for activation...]</div>
 
   <script>
     (function secureApp() {
@@ -63,22 +64,11 @@
       }
     })();
 
-    let logEntries = [];
-
-    function logActivity(message) {
-      const log = document.getElementById("activityLog");
-      const timestamp = new Date().toLocaleTimeString();
-      const entry = `[${timestamp}] ${message}`;
-      logEntries.push(entry);
-      log.innerText = logEntries.join('\n');
-    }
-
     function activateShield() {
       const status = document.getElementById("status");
       status.innerText = "✅ Shield activated: Monitoring blocked.";
 
       const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
-
       if ('MutationObserver' in window) {
         const observer = new MutationObserver(mutations => {
           for (const mutation of mutations) {
@@ -86,7 +76,7 @@
               if (node.tagName === "SCRIPT" && node.src) {
                 for (const block of blockList) {
                   if (node.src.includes(block)) {
-                    logActivity(`Blocked external script: ${node.src}`);
+                    console.warn("Blocked script:", node.src);
                     node.remove();
                   }
                 }
@@ -95,42 +85,18 @@
           }
         });
         observer.observe(document, { childList: true, subtree: true });
-        logActivity("MutationObserver enabled and scanning for trackers...");
       } else {
-        logActivity("⚠️ MutationObserver not supported on this device.");
+        console.warn("MutationObserver not supported.");
       }
 
       const originalFetch = window.fetch;
       window.fetch = (...args) => {
         if (args[0].toString().includes("isp-monitoring")) {
-          logActivity(`Blocked fetch request to: ${args[0]}`);
-          return new Promise(() => {}); // Block forever
+          console.warn("Blocked fetch to:", args[0]);
+          return new Promise(() => {});
         }
         return originalFetch(...args);
       };
-
-      logActivity("Privacy Shield is now active.");
-    }
-
-    function downloadReport() {
-      const timestamp = new Date().toISOString();
-      const report = 
-`PrivacyGuard Protection Report
-------------------------------
-Status: Active
-Timestamp: ${timestamp}
-
-Activity Log:
-${logEntries.join('\n')}
-`;
-
-      const blob = new Blob([report], { type: "text/plain" });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "PrivacyGuard_Protection_Report.txt";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
     }
   </script>
 </body>
