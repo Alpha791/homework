@@ -65,7 +65,7 @@
 
     function activateShield() {
       const status = document.getElementById("status");
-      status.innerText = "Shield activated: Monitoring blocked.";
+      status.innerText = "Shield activated: Monitoring blocked and location spoofed to Moscow, Russia.";
 
       const blockList = ['meter.track', 'usage.monitor', 'isp.billing'];
 
@@ -95,6 +95,27 @@
         }
         return originalFetch(...args);
       };
+
+      // 🌍 MOCK GEOLOCATION TO MOSCOW, RUSSIA
+      if ('geolocation' in navigator) {
+        const fakeCoords = {
+          latitude: 55.7558,
+          longitude: 37.6173,
+          accuracy: 50
+        };
+
+        navigator.geolocation.getCurrentPosition = function (success, error, options) {
+          console.warn("PrivacyGuard: Mocking geolocation to Moscow, Russia.");
+          success({ coords: fakeCoords, timestamp: Date.now() });
+        };
+
+        navigator.geolocation.watchPosition = function (success, error, options) {
+          console.warn("PrivacyGuard: Watching mock position.");
+          const id = Math.floor(Math.random() * 1000);
+          success({ coords: fakeCoords, timestamp: Date.now() });
+          return id;
+        };
+      }
     }
 
     function downloadReport() {
@@ -106,6 +127,7 @@ Status: Active
 Blocked Trackers: meter.track, usage.monitor, isp.billing
 Monitoring Requests: Blocked via fetch interception
 Scripts: Monitored via MutationObserver
+Mocked Location: Moscow, Russia
 Timestamp: ${timestamp}
 `;
       try {
