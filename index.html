@@ -1,228 +1,662 @@
-<!--
-=========================================
-  Secure Homework Portal - Full Stack
-  Author: Code Generator GPT
-  Usage: Split frontend and backend
-=========================================
--->
-
-<!-- ================= FRONTEND HTML ================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Homework Portal</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
   <style>
-    body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
-    h1, h2 { color: #333; }
-    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
-    input, textarea, select, button {
-      width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px;
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #364fc7;
+      --secondary: #3f37c9;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #4caf50;
+      --danger: #f44336;
+      --warning: #ff9800;
+      --gray: #e9ecef;
+      --border-radius: 8px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
     }
-    button { background: #4361ee; color: #fff; border: none; cursor: pointer; }
-    button:hover { background: #364fc7; }
-    .lesson { background: #e9ecef; padding: 10px; margin: 10px 0; border-radius: 6px; }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    header {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+    }
+    
+    header h1 {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .user-info span {
+      font-weight: 500;
+    }
+    
+    .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--primary);
+      color: var(--primary);
+    }
+    
+    .btn-outline:hover {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+    }
+    
+    .btn-danger:hover {
+      background: #d32f2f;
+    }
+    
+    section {
+      padding: 25px;
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--primary);
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--gray);
+    }
+    
+    .card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    textarea.form-control {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .file-upload {
+      border: 2px dashed #ddd;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .file-upload:hover {
+      border-color: var(--primary);
+    }
+    
+    .file-upload input {
+      display: none;
+    }
+    
+    .file-name {
+      margin-top: 10px;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .lesson-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      transition: var(--transition);
+      border-left: 4px solid var(--primary);
+    }
+    
+    .lesson-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .lesson-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    
+    .lesson-card p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+    
+    .lesson-meta {
+      display: flex;
+      justify-content: space-between;
+      color: #888;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+    
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .download-btn:hover {
+      color: var(--primary-dark);
+    }
+    
+    .alert {
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+    }
+    
+    .alert-success {
+      background: rgba(76, 175, 80, 0.15);
+      color: var(--success);
+      border: 1px solid var(--success);
+    }
+    
+    .alert-error {
+      background: rgba(244, 67, 54, 0.15);
+      color: var(--danger);
+      border: 1px solid var(--danger);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .tab-container {
+      margin-bottom: 20px;
+    }
+    
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+    
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-weight: 500;
+      color: #666;
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .tab.active {
+      color: var(--primary);
+    }
+    
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--primary);
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+    
+    .loader {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    @media (max-width: 768px) {
+      .lesson-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+      }
+      
+      .user-info {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📚 Secure Homework Portal</h1>
-
-    <!-- AUTH SECTION -->
-    <div id="auth">
-      <h2>Login/Register</h2>
-      <input id="username" placeholder="Username" />
-      <input id="password" type="password" placeholder="Password" />
-      <select id="role">
-        <option value="student">Student</option>
-        <option value="teacher">Teacher</option>
-      </select>
-      <button onclick="register()">Register</button>
-      <button onclick="login()">Login</button>
-    </div>
-
-    <!-- UPLOAD SECTION (Visible only to teachers) -->
-    <div id="uploadSection" style="display:none;">
-      <h2>Upload Lesson</h2>
-      <input id="lessonTitle" placeholder="Lesson Title" />
-      <textarea id="lessonDesc" placeholder="Description"></textarea>
-      <select id="lessonGrade">
-        <option value="">Select Grade</option>
-        <script>for(let i=1;i<=9;i++)document.write(`<option value="grade${i}">Grade ${i}</option>`);</script>
-      </select>
-      <input type="file" id="lessonFile" />
-      <button onclick="uploadLesson()">Upload</button>
-    </div>
-
-    <!-- LESSON VIEWER -->
-    <div>
-      <h2>View Lessons</h2>
-      <select id="gradeSelect" onchange="loadLessons()">
-        <option value="">Select Grade</option>
-        <script>for(let i=1;i<=9;i++)document.write(`<option value="grade${i}">Grade ${i}</option>`);</script>
-      </select>
-      <div id="lessonList"></div>
-    </div>
+    <header>
+      <h1>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+        </svg>
+        Secure Homework Portal
+      </h1>
+      <div class="user-info">
+        <span id="userGreeting">Welcome, Guest</span>
+        <button id="logoutBtn" class="btn btn-outline hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+          Logout
+        </button>
+      </div>
+    </header>
+    
+    <main>
+      <!-- Auth Section -->
+      <section id="authSection">
+        <div class="card">
+          <h2 class="section-title">Login / Register</h2>
+          <div id="authMessage" class="alert hidden"></div>
+          
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" class="form-control" placeholder="Enter your email" />
+          </div>
+          
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Enter your password" />
+          </div>
+          
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" class="form-control">
+              <option value="student">Student</option>
+              <option value="teacher">Teacher</option>
+            </select>
+          </div>
+          
+          <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button id="registerBtn" class="btn">Register</button>
+            <button id="loginBtn" class="btn">Login</button>
+          </div>
+        </div>
+      </section>
+      
+      <!-- App Content (Hidden until login) -->
+      <section id="appContent" class="hidden">
+        <div class="tab-container">
+          <div class="tabs">
+            <button class="tab active" data-tab="lessons">View Lessons</button>
+            <button class="tab" data-tab="upload" id="uploadTab">Upload Lesson</button>
+          </div>
+          
+          <div class="tab-content active" id="lessonsTab">
+            <div class="card">
+              <h2 class="section-title">Available Lessons</h2>
+              
+              <div class="form-group">
+                <label for="gradeSelect">Select Grade</label>
+                <select id="gradeSelect" class="form-control">
+                  <option value="">Select Grade</option>
+                  <option value="grade1">Grade 1</option>
+                  <option value="grade2">Grade 2</option>
+                  <option value="grade3">Grade 3</option>
+                  <option value="grade4">Grade 4</option>
+                  <option value="grade5">Grade 5</option>
+                  <option value="grade6">Grade 6</option>
+                  <option value="grade7">Grade 7</option>
+                  <option value="grade8">Grade 8</option>
+                  <option value="grade9">Grade 9</option>
+                </select>
+              </div>
+              
+              <div id="lessonList" class="lesson-grid"></div>
+              <div id="loader" class="loader hidden"></div>
+            </div>
+          </div>
+          
+          <div class="tab-content" id="uploadTabContent">
+            <div class="card">
+              <h2 class="section-title">Upload Lesson</h2>
+              <div id="uploadMessage" class="alert hidden"></div>
+              
+              <div class="form-group">
+                <label for="lessonTitle">Lesson Title</label>
+                <input type="text" id="lessonTitle" class="form-control" placeholder="Enter lesson title" />
+              </div>
+              
+              <div class="form-group">
+                <label for="lessonDesc">Description</label>
+                <textarea id="lessonDesc" class="form-control" placeholder="Enter lesson description"></textarea>
+              </div>
+              
+              <div class="form-group">
+                <label for="lessonGrade">Grade</label>
+                <select id="lessonGrade" class="form-control">
+                  <option value="">Select Grade</option>
+                  <option value="grade1">Grade 1</option>
+                  <option value="grade2">Grade 2</option>
+                  <option value="grade3">Grade 3</option>
+                  <option value="grade4">Grade 4</option>
+                  <option value="grade5">Grade 5</option>
+                  <option value="grade6">Grade 6</option>
+                  <option value="grade7">Grade 7</option>
+                  <option value="grade8">Grade 8</option>
+                  <option value="grade9">Grade 9</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label>Upload File</label>
+                <div class="file-upload" id="fileUploadArea">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                  </svg>
+                  <p>Click to select a file or drag it here</p>
+                  <p class="file-name" id="fileName">No file selected</p>
+                  <input type="file" id="lessonFile" />
+                </div>
+              </div>
+              
+              <button id="uploadLessonBtn" class="btn">Upload Lesson</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer style="text-align: center; padding: 20px; color: #666; font-size: 0.9rem;">
+      <p>Secure Homework Portal &copy; 2023 | All rights reserved</p>
+    </footer>
   </div>
 
   <script>
+    // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmXK2rYvjDd9vGp5zS6rLkHlJbF3eTq4w",
+      authDomain: "secure-homework-portal.firebaseapp.com",
+      projectId: "secure-homeport-12345",
+      storageBucket: "secure-homeport-12345.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890abcdef"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    // DOM Elements
+    const authSection = document.getElementById('authSection');
+    const appContent = document.getElementById('appContent');
+    const userGreeting = document.getElementById('userGreeting');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const registerBtn = document.getElementById('registerBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const uploadTab = document.getElementById('uploadTab');
+    const uploadLessonBtn = document.getElementById('uploadLessonBtn');
+    const fileUploadArea = document.getElementById('fileUploadArea');
+    const lessonFile = document.getElementById('lessonFile');
+    const fileName = document.getElementById('fileName');
+    const gradeSelect = document.getElementById('gradeSelect');
+    const lessonList = document.getElementById('lessonList');
+    const loader = document.getElementById('loader');
+    const authMessage = document.getElementById('authMessage');
+    const uploadMessage = document.getElementById('uploadMessage');
+    
+    // Current user data
     let currentUser = null;
+    let userRole = null;
 
-    async function register() {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.value,
-          password: password.value,
-          role: role.value
-        })
-      });
-      const data = await res.json();
-      alert(data.success ? "Registered successfully!" : data.error);
-    }
+    // File upload handling
+    fileUploadArea.addEventListener('click', () => lessonFile.click());
+    lessonFile.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        fileName.textContent = e.target.files[0].name;
+      } else {
+        fileName.textContent = 'No file selected';
+      }
+    });
 
-    async function login() {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: username.value,
-          password: password.value
-        })
+    // Drag and drop for file upload
+    fileUploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      fileUploadArea.style.borderColor = '#4361ee';
+      fileUploadArea.style.backgroundColor = '#f0f4ff';
+    });
+
+    fileUploadArea.addEventListener('dragleave', () => {
+      fileUploadArea.style.borderColor = '#ddd';
+      fileUploadArea.style.backgroundColor = '';
+    });
+
+    fileUploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileUploadArea.style.borderColor = '#ddd';
+      fileUploadArea.style.backgroundColor = '';
+      
+      if (e.dataTransfer.files.length > 0) {
+        lessonFile.files = e.dataTransfer.files;
+        fileName.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and content
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Show corresponding content
+        const tabName = tab.getAttribute('data-tab');
+        document.getElementById(`${tabName}Tab`).classList.add('active');
       });
-      const data = await res.json();
-      if (data.success) {
-        currentUser = data.user;
-        alert("Login successful!");
-        auth.style.display = "none";
-        if (currentUser.role === "teacher") {
-          uploadSection.style.display = "block";
+    });
+
+    // Authentication state observer
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // User is signed in
+        currentUser = user;
+        
+        // Get user data from Firestore
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        
+        if (userDoc.exists) {
+          const userData = userDoc.data();
+          userRole = userData.role;
+          
+          // Update UI
+          userGreeting.textContent = `Welcome, ${user.email}`;
+          authSection.classList.add('hidden');
+          appContent.classList.remove('hidden');
+          logoutBtn.classList.remove('hidden');
+          
+          // Show upload tab only for teachers
+          if (userRole === 'teacher') {
+            uploadTab.classList.remove('hidden');
+          } else {
+            uploadTab.classList.add('hidden');
+          }
+        } else {
+          // User document doesn't exist
+          showAuthMessage('User data not found. Please register again.', 'error');
+          await auth.signOut();
         }
       } else {
-        alert("Login failed");
+        // User is signed out
+        currentUser = null;
+        userRole = null;
+        authSection.classList.remove('hidden');
+        appContent.classList.add('hidden');
+        logoutBtn.classList.add('hidden');
+        userGreeting.textContent = 'Welcome, Guest';
       }
-    }
+    });
 
-    async function uploadLesson() {
-      const formData = new FormData();
-      formData.append("title", lessonTitle.value);
-      formData.append("description", lessonDesc.value);
-      formData.append("grade", lessonGrade.value);
-      formData.append("file", lessonFile.files[0]);
+    // Register new user
+    registerBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const role = document.getElementById('role').value;
+      
+      if (!email || !password) {
+        showAuthMessage('Please enter email and password', 'error');
+        return;
+      }
+      
+      try {
+        // Create user with Firebase Auth
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        
+        // Create user document in Firestore
+        await db.collection('users').doc(userCredential.user.uid).set({
+          email: email,
+          role: role,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        
+        showAuthMessage('Registration successful!', 'success');
+      } catch (error) {
+        showAuthMessage(error.message, 'error');
+      }
+    });
 
-      const res = await fetch("/api/lessons/upload", {
-        method: "POST",
-        body: formData
-      });
-      const data = await res.json();
-      alert(data.success ? "Lesson uploaded!" : "Upload failed");
-    }
+    // Login existing user
+    loginBtn.addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      if (!email || !password) {
+        showAuthMessage('Please enter email and password', 'error');
+        return;
+      }
+      
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+      } catch (error) {
+        showAuthMessage(error.message, 'error');
+      }
+    });
 
-    async function loadLessons() {
-      const grade = gradeSelect.value;
-      const res = await fetch(`/api/lessons/${grade}`);
-      const lessons = await res.json();
-      lessonList.innerHTML = lessons.map(lesson => `
-        <div class="lesson">
-          <h3>${lesson.title}</h3>
-          <p>${lesson.description}</p>
-          <a href="/uploads/${lesson.file}" target="_blank">Download</a>
-        </div>
-      `).join('');
-    }
-  </script>
-</body>
-</html>
-
-<!-- ================== BACKEND (Node.js) ================== -->
-<!-- Paste this part into `server.js` for backend server -->
-
-<!--
-const express = require('express');
-const session = require('express-session');
-const mongoose = require('mongoose');
-const multer = require('multer');
-const bcrypt = require('bcrypt');
-const cors = require('cors');
-const path = require('path');
-
-const app = express();
-require('dotenv').config();
-
-mongoose.connect('mongodb://localhost:27017/homeworkPortal');
-
-const User = mongoose.model('User', new mongoose.Schema({
-  username: String,
-  password: String,
-  role: String
-}));
-
-const Lesson = mongoose.model('Lesson', new mongoose.Schema({
-  title: String,
-  description: String,
-  grade: String,
-  file: String,
-  uploadedBy: mongoose.Schema.Types.ObjectId
-}));
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(session({ secret: 'mySecret', resave: false, saveUninitialized: true }));
-app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
-app.use(express.static('public'));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'public/uploads'),
-  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
-});
-const upload = multer({ storage });
-
-// Register
-app.post('/api/auth/register', async (req, res) => {
-  const { username, password, role } = req.body;
-  try {
-    const hash = await bcrypt.hash(password, 10);
-    await new User({ username, password: hash, role }).save();
-    res.json({ success: true });
-  } catch {
-    res.status(400).json({ error: 'Username already taken' });
-  }
-});
-
-// Login
-app.post('/api/auth/login', async (req, res) => {
-  const user = await User.findOne({ username: req.body.username });
-  if (user && await bcrypt.compare(req.body.password, user.password)) {
-    req.session.user = user;
-    res.json({ success: true, user: { username: user.username, role: user.role } });
-  } else {
-    res.status(401).json({ error: 'Invalid credentials' });
-  }
-});
-
-// Upload Lesson
-app.post('/api/lessons/upload', upload.single('file'), async (req, res) => {
-  if (!req.session.user || req.session.user.role !== 'teacher') return res.status(403).json({ error: 'Unauthorized' });
-  const lesson = new Lesson({
-    title: req.body.title,
-    description: req.body.description,
-    grade: req.body.grade,
-    file: req.file.filename,
-    uploadedBy: req.session.user._id
-  });
-  await lesson.save();
-  res.json({ success: true });
-});
-
-// Fetch lessons by grade
-app.get('/api/lessons/:grade', async (req, res) => {
-  const lessons = await Lesson.find({ grade: req.params.grade });
-  res.json(lessons);
-});
-
-// Start server
-app.listen(process.env.PORT || 3000, () => console.log('Server running on port 3000'));
--->
+    // Logout
+    logoutBtn.a
