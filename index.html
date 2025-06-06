@@ -1,1511 +1,228 @@
+<!--
+=========================================
+  Secure Homework Portal - Full Stack
+  Author: Code Generator GPT
+  Usage: Split frontend and backend
+=========================================
+-->
+
+<!-- ================= FRONTEND HTML ================= -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Homework Portal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #4361ee;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --teacher: #7209b7;
-            --student: #3a86ff;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --secure-green: #2ecc71;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f7f9fa;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 15px 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-        
-        .logo i {
-            color: var(--success);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-        
-        .nav-link {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            color: white;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn {
-            padding: 8px 20px;
-            border: none;
-            border-radius: 4px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .btn-primary {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .btn-outline {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            color: white;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary:hover {
-            background-color: #3ab4d9;
-        }
-        
-        .btn-outline:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .hero {
-            background: linear-gradient(rgba(67, 97, 238, 0.9), rgba(63, 55, 201, 0.9)), url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 80px 20px;
-            margin-bottom: 40px;
-        }
-        
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-        
-        .hero p {
-            font-size: 1.2rem;
-            max-width: 700px;
-            margin: 0 auto 30px;
-            opacity: 0.9;
-        }
-        
-        .btn-lg {
-            padding: 12px 30px;
-            font-size: 1.1rem;
-        }
-        
-        .features {
-            padding: 60px 0;
-            background-color: white;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 40px;
-            color: var(--primary);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            padding: 30px;
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-        
-        .feature-card h3 {
-            margin-bottom: 15px;
-            color: var(--dark);
-        }
-        
-        .dashboard {
-            padding: 40px 0;
-            display: none;
-        }
-        
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .role-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        
-        .teacher-badge {
-            background-color: rgba(114, 9, 183, 0.1);
-            color: var(--teacher);
-        }
-        
-        .student-badge {
-            background-color: rgba(58, 134, 255, 0.1);
-            color: var(--student);
-        }
-        
-        .card {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-        
-        .card-header {
-            padding: 20px;
-            background-color: var(--light);
-            border-bottom: 1px solid var(--light-gray);
-            font-weight: 600;
-        }
-        
-        .card-body {
-            padding: 20px;
-        }
-        
-        .assignment-list {
-            list-style: none;
-        }
-        
-        .assignment-item {
-            padding: 15px 0;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .assignment-item:last-child {
-            border-bottom: none;
-        }
-        
-        .assignment-title {
-            font-weight: 500;
-            margin-bottom: 5px;
-        }
-        
-        .assignment-meta {
-            display: flex;
-            gap: 15px;
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        .assignment-actions {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .btn-sm {
-            padding: 6px 12px;
-            font-size: 0.9rem;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
-        }
-        
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-        
-        .form-control {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-        
-        .form-control:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-        }
-        
-        textarea.form-control {
-            min-height: 150px;
-            resize: vertical;
-        }
-        
-        .login-container, .register-container {
-            max-width: 500px;
-            margin: 50px auto;
-            padding: 30px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            display: none;
-        }
-        
-        .form-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--primary);
-        }
-        
-        .switch-form {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-        
-        .switch-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        footer {
-            background: var(--dark);
-            color: white;
-            padding: 40px 0 20px;
-            margin-top: 60px;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-        
-        .footer-links {
-            list-style: none;
-        }
-        
-        .footer-links li {
-            margin-bottom: 10px;
-        }
-        
-        .footer-links a {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: white;
-        }
-        
-        .copyright {
-            text-align: center;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.9rem;
-        }
-        
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        @media (max-width: 768px) {
-            .nav-links, .auth-buttons {
-                display: none;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
-            
-            .hero {
-                padding: 60px 20px;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .assignment-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .assignment-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
-        
-        /* Mobile menu */
-        .mobile-nav {
-            position: fixed;
-            top: 0;
-            right: -300px;
-            width: 300px;
-            height: 100vh;
-            background: white;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            transition: right 0.3s ease;
-            padding: 20px;
-        }
-        
-        .mobile-nav.active {
-            right: 0;
-        }
-        
-        .mobile-nav-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .close-menu {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        .mobile-nav-links {
-            list-style: none;
-        }
-        
-        .mobile-nav-links li {
-            margin-bottom: 15px;
-        }
-        
-        .mobile-nav-links a {
-            color: var(--dark);
-            text-decoration: none;
-            font-weight: 500;
-            display: block;
-            padding: 10px;
-            border-radius: 4px;
-        }
-        
-        .mobile-nav-links a:hover, .mobile-nav-links a.active {
-            background: var(--light);
-        }
-        
-        .mobile-auth-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 30px;
-        }
-        
-        /* Overlay for mobile menu */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 4px;
-            color: white;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 2000;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-        
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .toast.success {
-            background-color: var(--success);
-        }
-        
-        .toast.error {
-            background-color: var(--danger);
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-input-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 15px;
-            background-color: var(--light);
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .file-input-button:hover {
-            background-color: #e9ecef;
-        }
-
-        .file-input-button i {
-            margin-right: 8px;
-            color: var(--primary);
-        }
-
-        .file-name {
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: var(--gray);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .attachment-badge {
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(67, 97, 238, 0.1);
-            color: var(--primary);
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
-
-        .attachment-badge i {
-            margin-right: 4px;
-        }
-
-        .no-assignments {
-            text-align: center;
-            padding: 30px;
-            color: var(--gray);
-        }
-
-        .no-assignments i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: var(--light-gray);
-        }
-        
-        .security-indicator {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: var(--secure-green);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 50px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            z-index: 100;
-        }
-        
-        .security-indicator i {
-            font-size: 1.2rem;
-        }
-        
-        .password-strength {
-            display: flex;
-            gap: 5px;
-            margin-top: 8px;
-        }
-        
-        .strength-bar {
-            height: 4px;
-            background: var(--light-gray);
-            flex-grow: 1;
-            border-radius: 2px;
-            transition: background-color 0.3s;
-        }
-        
-        .strength-bar.active {
-            background: var(--secure-green);
-        }
-        
-        .strength-label {
-            font-size: 0.8rem;
-            margin-top: 5px;
-            color: var(--gray);
-        }
-        
-        .password-info {
-            font-size: 0.85rem;
-            color: var(--gray);
-            margin-top: 5px;
-        }
-        
-        .logout-btn {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        
-        .logout-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .secure-notice {
-            background: rgba(46, 204, 113, 0.1);
-            border-left: 4px solid var(--secure-green);
-            padding: 15px;
-            border-radius: 0 4px 4px 0;
-            margin-top: 20px;
-            font-size: 0.9rem;
-        }
-        
-        .secure-notice i {
-            color: var(--secure-green);
-            margin-right: 8px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Homework Portal</title>
+  <style>
+    body { font-family: sans-serif; background: #f2f2f2; padding: 20px; }
+    h1, h2 { color: #333; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    input, textarea, select, button {
+      width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px;
+    }
+    button { background: #4361ee; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #364fc7; }
+    .lesson { background: #e9ecef; padding: 10px; margin: 10px 0; border-radius: 6px; }
+  </style>
 </head>
 <body>
-    <!-- Security Indicator -->
-    <div class="security-indicator">
-        <i class="fas fa-lock"></i>
-        <span>Secure Connection</span>
+  <div class="container">
+    <h1>📚 Secure Homework Portal</h1>
+
+    <!-- AUTH SECTION -->
+    <div id="auth">
+      <h2>Login/Register</h2>
+      <input id="username" placeholder="Username" />
+      <input id="password" type="password" placeholder="Password" />
+      <select id="role">
+        <option value="student">Student</option>
+        <option value="teacher">Teacher</option>
+      </select>
+      <button onclick="register()">Register</button>
+      <button onclick="login()">Login</button>
     </div>
 
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <i class="fas fa-ship"></i>
-                    <span>Secure Homework Portal</span>
-                </div>
-                <nav class="nav-links">
-                    <a href="#" class="nav-link active">Home</a>
-                    <a href="#" class="nav-link">Features</a>
-                    <a href="#" class="nav-link">Security</a>
-                    <a href="#" class="nav-link">Contact</a>
-                </nav>
-                <div class="auth-buttons">
-                    <button class="btn btn-outline" id="loginBtn">Login</button>
-                    <button class="btn btn-primary" id="registerBtn">Register</button>
-                </div>
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </header>
-
-    <!-- Mobile Navigation -->
-    <div class="mobile-nav" id="mobileNav">
-        <div class="mobile-nav-header">
-            <div class="logo">
-                <i class="fas fa-ship"></i>
-                <span>Secure Portal</span>
-            </div>
-            <button class="close-menu" id="closeMenuBtn">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <ul class="mobile-nav-links">
-            <li><a href="#" class="active">Home</a></li>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Security</a></li>
-            <li><a href="#">Contact</a></li>
-        </ul>
-        <div class="mobile-auth-buttons">
-            <button class="btn btn-outline" id="mobileLoginBtn">Login</button>
-            <button class="btn btn-primary" id="mobileRegisterBtn">Register</button>
-        </div>
-    </div>
-    <div class="overlay" id="overlay"></div>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Secure Homework Portal</h1>
-            <p>Advanced security features protecting teachers and students. Assign homework, submit responses, and track progress in a safe environment.</p>
-            <button class="btn btn-primary btn-lg" id="heroLoginBtn">Get Started</button>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Security Features</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <h3>End-to-End Encryption</h3>
-                    <p>All data is encrypted both in transit and at rest using industry-standard AES-256 encryption.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-key"></i>
-                    </div>
-                    <h3>Password Hashing</h3>
-                    <p>Passwords are hashed with SHA-256 and salted before storage to prevent unauthorized access.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3>Secure Sessions</h3>
-                    <p>Short-lived session tokens with automatic expiration ensure secure authentication.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-user-secret"></i>
-                    </div>
-                    <h3>Privacy Protection</h3>
-                    <p>Student submissions are private and only visible to authorized teachers and students.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-bug"></i>
-                    </div>
-                    <h3>XSS Protection</h3>
-                    <p>Built-in safeguards against cross-site scripting attacks and other web vulnerabilities.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-cloud-download-alt"></i>
-                    </div>
-                    <h3>Secure File Handling</h3>
-                    <p>File attachments are scanned for malware and stored securely with access controls.</p>
-                </div>
-            </div>
-            
-            <div class="secure-notice">
-                <i class="fas fa-info-circle"></i>
-                <strong>Security Notice:</strong> While this demo implements security best practices in the frontend, 
-                a production system would require server-side security measures including proper password hashing, 
-                database encryption, and HTTPS enforcement.
-            </div>
-        </div>
-    </section>
-
-    <!-- Login Form -->
-    <div class="login-container" id="loginContainer">
-        <h2 class="form-title">Secure Login</h2>
-        <form id="loginForm">
-            <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="loginEmail" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" id="loginPassword" required>
-                <div class="password-info">
-                    <i class="fas fa-info-circle"></i> Your password is never stored in plain text
-                </div>
-            </div>
-            <div class="form-group">
-                <label>
-                    <input type="checkbox" id="rememberMe"> Remember me (30 days)
-                </label>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Login Securely</button>
-            <div class="switch-form">
-                Don't have an account? <a class="switch-link" id="switchToRegister">Register</a>
-            </div>
-        </form>
+    <!-- UPLOAD SECTION (Visible only to teachers) -->
+    <div id="uploadSection" style="display:none;">
+      <h2>Upload Lesson</h2>
+      <input id="lessonTitle" placeholder="Lesson Title" />
+      <textarea id="lessonDesc" placeholder="Description"></textarea>
+      <select id="lessonGrade">
+        <option value="">Select Grade</option>
+        <script>for(let i=1;i<=9;i++)document.write(`<option value="grade${i}">Grade ${i}</option>`);</script>
+      </select>
+      <input type="file" id="lessonFile" />
+      <button onclick="uploadLesson()">Upload</button>
     </div>
 
-    <!-- Register Form -->
-    <div class="register-container" id="registerContainer">
-        <h2 class="form-title">Create Secure Account</h2>
-        <form id="registerForm">
-            <div class="form-group">
-                <label class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="registerName" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="registerEmail" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Password</label>
-                <input type="password" class="form-control" id="registerPassword" required minlength="8">
-                <div class="password-strength">
-                    <div class="strength-bar"></div>
-                    <div class="strength-bar"></div>
-                    <div class="strength-bar"></div>
-                    <div class="strength-bar"></div>
-                </div>
-                <div class="strength-label">Password strength: <span id="strengthText">Weak</span></div>
-                <div class="password-info">
-                    <i class="fas fa-info-circle"></i> Use 8+ characters with a mix of letters, numbers & symbols
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="registerConfirmPassword" required>
-            </div>
-            <div class="form-group">
-                <label class="form-label">I am a:</label>
-                <div>
-                    <label>
-                        <input type="radio" name="role" value="teacher" checked> Teacher
-                    </label>
-                    <label style="margin-left: 20px;">
-                        <input type="radio" name="role" value="student"> Student
-                    </label>
-                </div>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Create Secure Account</button>
-            <div class="switch-form">
-                Already have an account? <a class="switch-link" id="switchToLogin">Login</a>
-            </div>
-        </form>
+    <!-- LESSON VIEWER -->
+    <div>
+      <h2>View Lessons</h2>
+      <select id="gradeSelect" onchange="loadLessons()">
+        <option value="">Select Grade</option>
+        <script>for(let i=1;i<=9;i++)document.write(`<option value="grade${i}">Grade ${i}</option>`);</script>
+      </select>
+      <div id="lessonList"></div>
     </div>
+  </div>
 
-    <!-- Dashboard -->
-    <section class="dashboard" id="dashboard">
-        <div class="container">
-            <div class="dashboard-header">
-                <div>
-                    <h2>Welcome, <span id="userName">Alex Morgan</span></h2>
-                    <small>Session expires in <span id="sessionTimer">30:00</span> minutes</small>
-                </div>
-                <div>
-                    <div class="role-badge teacher-badge" id="roleBadge">
-                        <i class="fas fa-chalkboard-teacher"></i> Teacher
-                    </div>
-                    <button class="btn btn-outline logout-btn" id="logoutBtn" style="margin-top: 10px;">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
-                </div>
-            </div>
+  <script>
+    let currentUser = null;
 
-            <div class="teacher-dashboard" id="teacherDashboard">
-                <!-- Create Assignment -->
-                <div class="card">
-                    <div class="card-header">Create New Assignment</div>
-                    <div class="card-body">
-                        <form id="assignmentForm">
-                            <div class="form-group">
-                                <label class="form-label">Assignment Title</label>
-                                <input type="text" class="form-control" id="assignmentTitle" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" id="assignmentDescription" required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Due Date</label>
-                                <input type="date" class="form-control" id="assignmentDueDate" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">Attachment (optional)</label>
-                                <div class="file-input-wrapper">
-                                    <div class="file-input-button">
-                                        <i class="fas fa-paperclip"></i>
-                                        <span>Choose File</span>
-                                    </div>
-                                    <input type="file" id="assignmentAttachment" accept=".pdf,.doc,.docx,.txt,.jpg,.png">
-                                </div>
-                                <div class="file-name" id="fileName">No file chosen</div>
-                                <small class="text-muted">Max file size: 5MB (PDF, DOC, TXT, JPG, PNG)</small>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create Assignment</button>
-                        </form>
-                    </div>
-                </div>
+    async function register() {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username.value,
+          password: password.value,
+          role: role.value
+        })
+      });
+      const data = await res.json();
+      alert(data.success ? "Registered successfully!" : data.error);
+    }
 
-                <!-- Assignments List -->
-                <div class="card">
-                    <div class="card-header">Current Assignments</div>
-                    <div class="card-body">
-                        <ul class="assignment-list" id="teacherAssignments">
-                            <!-- Empty state for assignments -->
-                            <li class="no-assignments">
-                                <i class="fas fa-inbox"></i>
-                                <h3>No Assignments Yet</h3>
-                                <p>Create your first assignment to get started</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    async function login() {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: username.value,
+          password: password.value
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        currentUser = data.user;
+        alert("Login successful!");
+        auth.style.display = "none";
+        if (currentUser.role === "teacher") {
+          uploadSection.style.display = "block";
+        }
+      } else {
+        alert("Login failed");
+      }
+    }
 
-            <div class="student-dashboard" id="studentDashboard">
-                <!-- Student Assignments -->
-                <div class="card">
-                    <div class="card-header">Your Assignments</div>
-                    <div class="card-body">
-                        <ul class="assignment-list" id="studentAssignments">
-                            <!-- Empty state for assignments -->
-                            <li class="no-assignments">
-                                <i class="fas fa-book-open"></i>
-                                <h3>No Assignments Yet</h3>
-                                <p>You'll see assignments here when your teacher creates them</p>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+    async function uploadLesson() {
+      const formData = new FormData();
+      formData.append("title", lessonTitle.value);
+      formData.append("description", lessonDesc.value);
+      formData.append("grade", lessonGrade.value);
+      formData.append("file", lessonFile.files[0]);
+
+      const res = await fetch("/api/lessons/upload", {
+        method: "POST",
+        body: formData
+      });
+      const data = await res.json();
+      alert(data.success ? "Lesson uploaded!" : "Upload failed");
+    }
+
+    async function loadLessons() {
+      const grade = gradeSelect.value;
+      const res = await fetch(`/api/lessons/${grade}`);
+      const lessons = await res.json();
+      lessonList.innerHTML = lessons.map(lesson => `
+        <div class="lesson">
+          <h3>${lesson.title}</h3>
+          <p>${lesson.description}</p>
+          <a href="/uploads/${lesson.file}" target="_blank">Download</a>
         </div>
-    </section>
-
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>Secure Homework Portal</h3>
-                    <p>Advanced security features protecting teachers and students for better learning outcomes.</p>
-                </div>
-                <div class="footer-section">
-                    <h3>Security</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Security Overview</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Data Protection</a></li>
-                        <li><a href="#">Compliance</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Resources</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Security Best Practices</a></li>
-                        <li><a href="#">Teacher Security Guide</a></li>
-                        <li><a href="#">Student Security Handbook</a></li>
-                        <li><a href="#">Security FAQ</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h3>Contact Security</h3>
-                    <ul class="footer-links">
-                        <li><i class="fas fa-envelope"></i> security@frigates.edu</li>
-                        <li><i class="fas fa-shield-alt"></i> Security Hotline: +254700123456</li>
-                        <li><i class="fas fa-lock"></i> Report Security Issues</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="copyright">
-                &copy; 2023 Secure Homework Portal. All rights reserved. | <i class="fas fa-lock"></i> Secured with AES-256 Encryption
-            </div>
-        </div>
-    </footer>
-
-    <!-- Toast Notifications -->
-    <div class="toast" id="toast"></div>
-
-    <script>
-        // Security Enhancements:
-        // 1. Password hashing with SHA-256 (client-side for demo, server-side in production)
-        // 2. Session management with expiration
-        // 3. Input validation
-        // 4. Secure data storage practices
-        
-        // DOM Elements
-        const loginBtn = document.getElementById('loginBtn');
-        const registerBtn = document.getElementById('registerBtn');
-        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
-        const mobileRegisterBtn = document.getElementById('mobileRegisterBtn');
-        const heroLoginBtn = document.getElementById('heroLoginBtn');
-        const loginContainer = document.getElementById('loginContainer');
-        const registerContainer = document.getElementById('registerContainer');
-        const switchToRegister = document.getElementById('switchToRegister');
-        const switchToLogin = document.getElementById('switchToLogin');
-        const loginForm = document.getElementById('loginForm');
-        const registerForm = document.getElementById('registerForm');
-        const dashboard = document.getElementById('dashboard');
-        const teacherDashboard = document.getElementById('teacherDashboard');
-        const studentDashboard = document.getElementById('studentDashboard');
-        const roleBadge = document.getElementById('roleBadge');
-        const userName = document.getElementById('userName');
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-        const mobileNav = document.getElementById('mobileNav');
-        const overlay = document.getElementById('overlay');
-        const toast = document.getElementById('toast');
-        const assignmentForm = document.getElementById('assignmentForm');
-        const assignmentAttachment = document.getElementById('assignmentAttachment');
-        const fileName = document.getElementById('fileName');
-        const logoutBtn = document.getElementById('logoutBtn');
-        const sessionTimer = document.getElementById('sessionTimer');
-        const registerPassword = document.getElementById('registerPassword');
-        const strengthText = document.getElementById('strengthText');
-        const strengthBars = document.querySelectorAll('.strength-bar');
-        
-        // Security Variables
-        let sessionTimeout;
-        const SESSION_DURATION = 30 * 60; // 30 minutes in seconds
-        let sessionTimeRemaining = SESSION_DURATION;
-        
-        // Mock Database (in a real app, this would be on the server)
-        const mockDB = {
-            users: JSON.parse(localStorage.getItem('secure_users')) || [],
-            assignments: JSON.parse(localStorage.getItem('secure_assignments')) || []
-        };
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is already logged in
-            const session = sessionStorage.getItem('secure_session');
-            if (session) {
-                const sessionData = JSON.parse(session);
-                showDashboard(sessionData.role, sessionData.name);
-                startSessionTimer();
-            }
-            
-            // Add demo assignments for teacher view
-            initDemoData();
-        });
-        
-        // Initialize demo data
-        function initDemoData() {
-            if (mockDB.assignments.length === 0) {
-                mockDB.assignments.push({
-                    id: 'asg1',
-                    title: 'Math Homework',
-                    description: 'Complete exercises 1-10 on page 45',
-                    dueDate: '2023-06-15',
-                    teacher: 'Demo Teacher',
-                    createdAt: new Date().toISOString()
-                });
-                
-                mockDB.assignments.push({
-                    id: 'asg2',
-                    title: 'Science Project',
-                    description: 'Research photosynthesis and create a presentation',
-                    dueDate: '2023-06-20',
-                    teacher: 'Demo Teacher',
-                    createdAt: new Date().toISOString()
-                });
-                
-                localStorage.setItem('secure_assignments', JSON.stringify(mockDB.assignments));
-            }
-            
-            renderAssignments();
-        }
-        
-        // Render assignments
-        function renderAssignments() {
-            const teacherAssignments = document.getElementById('teacherAssignments');
-            const studentAssignments = document.getElementById('studentAssignments');
-            
-            // Clear existing assignments
-            teacherAssignments.innerHTML = '';
-            studentAssignments.innerHTML = '';
-            
-            if (mockDB.assignments.length === 0) {
-                teacherAssignments.innerHTML = `
-                    <li class="no-assignments">
-                        <i class="fas fa-inbox"></i>
-                        <h3>No Assignments Yet</h3>
-                        <p>Create your first assignment to get started</p>
-                    </li>
-                `;
-                
-                studentAssignments.innerHTML = `
-                    <li class="no-assignments">
-                        <i class="fas fa-book-open"></i>
-                        <h3>No Assignments Yet</h3>
-                        <p>You'll see assignments here when your teacher creates them</p>
-                    </li>
-                `;
-                return;
-            }
-            
-            // Render teacher assignments
-            mockDB.assignments.forEach(assignment => {
-                const dueDate = new Date(assignment.dueDate);
-                const dueDateFormatted = dueDate.toLocaleDateString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                });
-                
-                const assignmentItem = document.createElement('li');
-                assignmentItem.className = 'assignment-item';
-                assignmentItem.innerHTML = `
-                    <div>
-                        <div class="assignment-title">${assignment.title}</div>
-                        <div class="assignment-meta">
-                            <span><i class="far fa-calendar-alt"></i> Due: ${dueDateFormatted}</span>
-                            <span><i class="fas fa-users"></i> 0 Submissions</span>
-                        </div>
-                    </div>
-                    <div class="assignment-actions">
-                        <button class="btn btn-primary btn-sm">View</button>
-                        <button class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                `;
-                teacherAssignments.appendChild(assignmentItem);
-            });
-            
-            // Render student assignments
-            mockDB.assignments.forEach(assignment => {
-                const dueDate = new Date(assignment.dueDate);
-                const dueDateFormatted = dueDate.toLocaleDateString('en-US', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric'
-                });
-                
-                const assignmentItem = document.createElement('li');
-                assignmentItem.className = 'assignment-item';
-                assignmentItem.innerHTML = `
-                    <div>
-                        <div class="assignment-title">${assignment.title}</div>
-                        <div class="assignment-meta">
-                            <span><i class="far fa-calendar-alt"></i> Due: ${dueDateFormatted}</span>
-                            <span><i class="fas fa-exclamation-circle" style="color: #FF9800;"></i> Pending</span>
-                        </div>
-                    </div>
-                    <div class="assignment-actions">
-                        <button class="btn btn-warning btn-sm">Submit</button>
-                    </div>
-                `;
-                studentAssignments.appendChild(assignmentItem);
-            });
-        }
-        
-        // Password hashing function (SHA-256) - In production, this should be done server-side
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-        
-        // Password strength checker
-        function checkPasswordStrength(password) {
-            let strength = 0;
-            
-            // Length check
-            if (password.length >= 8) strength += 1;
-            if (password.length >= 12) strength += 1;
-            
-            // Character variety
-            if (/[A-Z]/.test(password)) strength += 1; // Uppercase letter
-            if (/[a-z]/.test(password)) strength += 1; // Lowercase letter
-            if (/[0-9]/.test(password)) strength += 1; // Number
-            if (/[^A-Za-z0-9]/.test(password)) strength += 1; // Special character
-            
-            // Update UI
-            strengthBars.forEach((bar, index) => {
-                bar.classList.toggle('active', index < strength);
-            });
-            
-            // Set strength text
-            if (strength <= 2) {
-                strengthText.textContent = 'Weak';
-                strengthText.style.color = '#f72585';
-            } else if (strength <= 4) {
-                strengthText.textContent = 'Medium';
-                strengthText.style.color = '#f8961e';
-            } else {
-                strengthText.textContent = 'Strong';
-                strengthText.style.color = '#2ecc71';
-            }
-            
-            return strength;
-        }
-        
-        // File input handling
-        assignmentAttachment.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                fileName.textContent = this.files[0].name;
-            } else {
-                fileName.textContent = 'No file chosen';
-            }
-        });
-        
-        // Show login form
-        function showLogin() {
-            loginContainer.style.display = 'block';
-            registerContainer.style.display = 'none';
-            dashboard.style.display = 'none';
-            closeMobileMenu();
-        }
-        
-        // Show register form
-        function showRegister() {
-            registerContainer.style.display = 'block';
-            loginContainer.style.display = 'none';
-            dashboard.style.display = 'none';
-            closeMobileMenu();
-        }
-        
-        // Show dashboard based on role
-        function showDashboard(role, name) {
-            dashboard.style.display = 'block';
-            loginContainer.style.display = 'none';
-            registerContainer.style.display = 'none';
-            
-            userName.textContent = name;
-            
-            if (role === 'teacher') {
-                teacherDashboard.style.display = 'block';
-                studentDashboard.style.display = 'none';
-                roleBadge.className = 'role-badge teacher-badge';
-                roleBadge.innerHTML = '<i class="fas fa-chalkboard-teacher"></i> Teacher';
-            } else {
-                teacherDashboard.style.display = 'none';
-                studentDashboard.style.display = 'block';
-                roleBadge.className = 'role-badge student-badge';
-                roleBadge.innerHTML = '<i class="fas fa-user-graduate"></i> Student';
-            }
-            
-            // Start session timer
-            startSessionTimer();
-        }
-        
-        // Start session timer
-        function startSessionTimer() {
-            clearInterval(sessionTimeout);
-            sessionTimeRemaining = SESSION_DURATION;
-            updateSessionTimer();
-            
-            sessionTimeout = setInterval(() => {
-                sessionTimeRemaining--;
-                updateSessionTimer();
-                
-                if (sessionTimeRemaining <= 0) {
-                    logout();
-                    showToast('Session expired. Please log in again.', 'error');
-                }
-            }, 1000);
-        }
-        
-        // Update session timer display
-        function updateSessionTimer() {
-            const minutes = Math.floor(sessionTimeRemaining / 60);
-            const seconds = sessionTimeRemaining % 60;
-            sessionTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-        
-        // Logout function
-        function logout() {
-            sessionStorage.removeItem('secure_session');
-            clearInterval(sessionTimeout);
-            loginContainer.style.display = 'none';
-            registerContainer.style.display = 'none';
-            dashboard.style.display = 'none';
-            showLogin();
-        }
-        
-        // Show toast notification
-        function showToast(message, type) {
-            toast.textContent = message;
-            toast.className = `toast show ${type}`;
-            
-            setTimeout(() => {
-                toast.className = 'toast';
-            }, 3000);
-        }
-        
-        // Open mobile menu
-        function openMobileMenu() {
-            mobileNav.classList.add('active');
-            overlay.classList.add('active');
-        }
-        
-        // Close mobile menu
-        function closeMobileMenu() {
-            mobileNav.classList.remove('active');
-            overlay.classList.remove('active');
-        }
-
-        // Event Listeners
-        loginBtn.addEventListener('click', showLogin);
-        registerBtn.addEventListener('click', showRegister);
-        mobileLoginBtn.addEventListener('click', showLogin);
-        mobileRegisterBtn.addEventListener('click', showRegister);
-        heroLoginBtn.addEventListener('click', showLogin);
-        switchToRegister.addEventListener('click', showRegister);
-        switchToLogin.addEventListener('click', showLogin);
-        mobileMenuBtn.addEventListener('click', openMobileMenu);
-        closeMenuBtn.addEventListener('click', closeMobileMenu);
-        overlay.addEventListener('click', closeMobileMenu);
-        logoutBtn.addEventListener('click', logout);
-        
-        // Password strength monitoring
-        registerPassword.addEventListener('input', function() {
-            checkPasswordStrength(this.value);
-        });
-
-        // Login form submission
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            // Input validation
-            if (!email || !password) {
-                showToast('Please enter both email and password', 'error');
-                return;
-            }
-            
-            // Find user
-            const user = mockDB.users.find(u => u.email === email);
-            if (!user) {
-                showToast('Invalid credentials', 'error');
-                return;
-            }
-            
-            // Hash the provided password for comparison
-            const hashedPassword = await hashPassword(password);
-            
-            // Compare hashed passwords (in production, this would be done server-side)
-            if (user.passwordHash === hashedPassword) {
-                // Create secure session
-                const sessionData = {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    createdAt: new Date().toISOString()
-                };
-                
-                sessionStorage.setItem('secure_session', JSON.stringify(sessionData));
-                
-                showDashboard(user.role, user.name);
-                showToast('Login successful!', 'success');
-            } else {
-                showToast('Invalid credentials', 'error');
-            }
-        });
-
-        // Register form submission
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('registerName').value;
-            const email = document.getElementById('registerEmail').value;
-            const password = document.getElementById('registerPassword').value;
-            const confirmPassword = document.getElementById('registerConfirmPassword').value;
-            const role = document.querySelector('input[name="role"]:checked').value;
-            
-            // Validation
-            if (!name || !email || !password || !confirmPassword) {
-                showToast('Please fill all fields', 'error');
-                return;
-            }
-            
-            if (password !== confirmPassword) {
-                showToast('Passwords do not match', 'error');
-                return;
-            }
-            
-            const strength = checkPasswordStrength(password);
-            if (strength < 3) {
-                showToast('Password is too weak. Please use a stronger password.', 'error');
-                return;
-            }
-            
-            // Check if email already exists
-            if (mockDB.users.some(u => u.email === email)) {
-                showToast('Email already registered', 'error');
-                return;
-            }
-            
-            // Hash password
-            const hashedPassword = await hashPassword(password);
-            
-            // Create user object
-            const user = {
-                id: 'user_' + Date.now(),
-                name,
-                email,
-                passwordHash: hashedPassword, // Store only the hash, never the plain password
-                role,
-                createdAt: new Date().toISOString()
-            };
-            
-            // Save to mock DB
-            mockDB.users.push(user);
-            localStorage.setItem('secure_users', JSON.stringify(mockDB.users));
-            
-            // Create session
-            const sessionData = {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                role: user.role,
-                createdAt: new Date().toISOString()
-            };
-            
-            sessionStorage.setItem('secure_session', JSON.stringify(sessionData));
-            
-            showDashboard(user.role, user.name);
-            showToast('Registration successful!', 'success');
-        });
-
-        // Assignment form submission
-        assignmentForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const title = document.getElementById('assignmentTitle').value;
-            const description = document.getElementById('assignmentDescription').value;
-            const dueDate = document.getElementById('assignmentDueDate').value;
-            const fileInput = document.getElementById('assignmentAttachment');
-            const hasAttachment = fileInput.files.length > 0;
-            
-            if (!title || !description || !dueDate) {
-                showToast('Please fill all required fields', 'error');
-                return;
-            }
-            
-            // Create assignment
-            const assignment = {
-                id: 'asg_' + Date.now(),
-                title,
-                description,
-                dueDate,
-                createdAt: new Date().toISOString(),
-                attachment: hasAttachment ? fileInput.files[0].name : null
-            };
-            
-            // Save to mock DB
-            mockDB.assignments.push(assignment);
-            localStorage.setItem('secure_assignments', JSON.stringify(mockDB.assignments));
-            
-            // Reset form
-            assignmentForm.reset();
-            fileName.textContent = 'No file chosen';
-            
-            // Update UI
-            renderAssignments();
-            showToast('Assignment created successfully!', 'success');
-        });
-    </script>
+      `).join('');
+    }
+  </script>
 </body>
 </html>
+
+<!-- ================== BACKEND (Node.js) ================== -->
+<!-- Paste this part into `server.js` for backend server -->
+
+<!--
+const express = require('express');
+const session = require('express-session');
+const mongoose = require('mongoose');
+const multer = require('multer');
+const bcrypt = require('bcrypt');
+const cors = require('cors');
+const path = require('path');
+
+const app = express();
+require('dotenv').config();
+
+mongoose.connect('mongodb://localhost:27017/homeworkPortal');
+
+const User = mongoose.model('User', new mongoose.Schema({
+  username: String,
+  password: String,
+  role: String
+}));
+
+const Lesson = mongoose.model('Lesson', new mongoose.Schema({
+  title: String,
+  description: String,
+  grade: String,
+  file: String,
+  uploadedBy: mongoose.Schema.Types.ObjectId
+}));
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(session({ secret: 'mySecret', resave: false, saveUninitialized: true }));
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
+app.use(express.static('public'));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'public/uploads'),
+  filename: (req, file, cb) => cb(null, `${Date.now()}-${file.originalname}`)
+});
+const upload = multer({ storage });
+
+// Register
+app.post('/api/auth/register', async (req, res) => {
+  const { username, password, role } = req.body;
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    await new User({ username, password: hash, role }).save();
+    res.json({ success: true });
+  } catch {
+    res.status(400).json({ error: 'Username already taken' });
+  }
+});
+
+// Login
+app.post('/api/auth/login', async (req, res) => {
+  const user = await User.findOne({ username: req.body.username });
+  if (user && await bcrypt.compare(req.body.password, user.password)) {
+    req.session.user = user;
+    res.json({ success: true, user: { username: user.username, role: user.role } });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
+// Upload Lesson
+app.post('/api/lessons/upload', upload.single('file'), async (req, res) => {
+  if (!req.session.user || req.session.user.role !== 'teacher') return res.status(403).json({ error: 'Unauthorized' });
+  const lesson = new Lesson({
+    title: req.body.title,
+    description: req.body.description,
+    grade: req.body.grade,
+    file: req.file.filename,
+    uploadedBy: req.session.user._id
+  });
+  await lesson.save();
+  res.json({ success: true });
+});
+
+// Fetch lessons by grade
+app.get('/api/lessons/:grade', async (req, res) => {
+  const lessons = await Lesson.find({ grade: req.params.grade });
+  res.json(lessons);
+});
+
+// Start server
+app.listen(process.env.PORT || 3000, () => console.log('Server running on port 3000'));
+-->
