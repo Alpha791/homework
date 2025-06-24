@@ -1,662 +1,608 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Homework Portal</title>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
-  <style>
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #364fc7;
-      --secondary: #3f37c9;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --success: #4caf50;
-      --danger: #f44336;
-      --warning: #ff9800;
-      --gray: #e9ecef;
-      --border-radius: 8px;
-      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      --transition: all 0.3s ease;
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      color: var(--dark);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 20px;
-    }
-    
-    .container {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-    
-    header {
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      color: white;
-      padding: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-    }
-    
-    header h1 {
-      font-size: 1.8rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .user-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .user-info span {
-      font-weight: 500;
-    }
-    
-    .btn {
-      background: var(--primary);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: var(--border-radius);
-      cursor: pointer;
-      font-weight: 500;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    
-    .btn:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
-    
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--primary);
-      color: var(--primary);
-    }
-    
-    .btn-outline:hover {
-      background: var(--primary);
-      color: white;
-    }
-    
-    .btn-danger {
-      background: var(--danger);
-    }
-    
-    .btn-danger:hover {
-      background: #d32f2f;
-    }
-    
-    section {
-      padding: 25px;
-    }
-    
-    .section-title {
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      color: var(--primary);
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--gray);
-    }
-    
-    .card {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    
-    .form-group {
-      margin-bottom: 20px;
-    }
-    
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--dark);
-    }
-    
-    .form-control {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: var(--border-radius);
-      font-size: 1rem;
-      transition: var(--transition);
-    }
-    
-    .form-control:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
-    }
-    
-    textarea.form-control {
-      min-height: 100px;
-      resize: vertical;
-    }
-    
-    .file-upload {
-      border: 2px dashed #ddd;
-      border-radius: var(--border-radius);
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-    }
-    
-    .file-upload:hover {
-      border-color: var(--primary);
-    }
-    
-    .file-upload input {
-      display: none;
-    }
-    
-    .file-name {
-      margin-top: 10px;
-      font-size: 0.9rem;
-      color: #666;
-    }
-    
-    .lesson-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-    
-    .lesson-card {
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      padding: 20px;
-      transition: var(--transition);
-      border-left: 4px solid var(--primary);
-    }
-    
-    .lesson-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-    
-    .lesson-card h3 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
-    
-    .lesson-card p {
-      color: #666;
-      margin-bottom: 15px;
-    }
-    
-    .lesson-meta {
-      display: flex;
-      justify-content: space-between;
-      color: #888;
-      font-size: 0.9rem;
-      margin-top: 10px;
-    }
-    
-    .download-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-    
-    .download-btn:hover {
-      color: var(--primary-dark);
-    }
-    
-    .alert {
-      padding: 15px;
-      border-radius: var(--border-radius);
-      margin-bottom: 20px;
-    }
-    
-    .alert-success {
-      background: rgba(76, 175, 80, 0.15);
-      color: var(--success);
-      border: 1px solid var(--success);
-    }
-    
-    .alert-error {
-      background: rgba(244, 67, 54, 0.15);
-      color: var(--danger);
-      border: 1px solid var(--danger);
-    }
-    
-    .hidden {
-      display: none;
-    }
-    
-    .tab-container {
-      margin-bottom: 20px;
-    }
-    
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #ddd;
-      margin-bottom: 20px;
-    }
-    
-    .tab {
-      padding: 10px 20px;
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-weight: 500;
-      color: #666;
-      position: relative;
-      transition: var(--transition);
-    }
-    
-    .tab.active {
-      color: var(--primary);
-    }
-    
-    .tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: -1px;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: var(--primary);
-    }
-    
-    .tab-content {
-      display: none;
-    }
-    
-    .tab-content.active {
-      display: block;
-    }
-    
-    .loader {
-      border: 4px solid rgba(0, 0, 0, 0.1);
-      border-top: 4px solid var(--primary);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) {
-      .lesson-grid {
-        grid-template-columns: 1fr;
-      }
-      
-      header {
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-      }
-      
-      .user-info {
-        width: 100%;
-        justify-content: space-between;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Homework Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-hover: 0 6px 16px rgba(0,0,0,0.15);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .user-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .tab:hover:not(.active) {
+            background: var(--light-gray);
+        }
+        
+        .content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        .card-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .homework-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .homework-item {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .homework-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .homework-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .homework-meta {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--light-gray);
+        }
+        
+        .homework-description {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .students-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .student-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        .student-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .student-id {
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .student-status {
+            font-size: 0.9rem;
+            padding: 5px 10px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            color: var(--gray);
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .homework-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .students-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .logo {
+                justify-content: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .students-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-        </svg>
-        Secure Homework Portal
-      </h1>
-      <div class="user-info">
-        <span id="userGreeting">Welcome, Guest</span>
-        <button id="logoutBtn" class="btn btn-outline hidden">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          Logout
-        </button>
-      </div>
-    </header>
-    
-    <main>
-      <!-- Auth Section -->
-      <section id="authSection">
-        <div class="card">
-          <h2 class="section-title">Login / Register</h2>
-          <div id="authMessage" class="alert hidden"></div>
-          
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" class="form-control" placeholder="Enter your email" />
-          </div>
-          
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" class="form-control" placeholder="Enter your password" />
-          </div>
-          
-          <div class="form-group">
-            <label for="role">Role</label>
-            <select id="role" class="form-control">
-              <option value="student">Student</option>
-              <option value="teacher">Teacher</option>
-            </select>
-          </div>
-          
-          <div style="display: flex; gap: 10px; margin-top: 20px;">
-            <button id="registerBtn" class="btn">Register</button>
-            <button id="loginBtn" class="btn">Login</button>
-          </div>
-        </div>
-      </section>
-      
-      <!-- App Content (Hidden until login) -->
-      <section id="appContent" class="hidden">
-        <div class="tab-container">
-          <div class="tabs">
-            <button class="tab active" data-tab="lessons">View Lessons</button>
-            <button class="tab" data-tab="upload" id="uploadTab">Upload Lesson</button>
-          </div>
-          
-          <div class="tab-content active" id="lessonsTab">
-            <div class="card">
-              <h2 class="section-title">Available Lessons</h2>
-              
-              <div class="form-group">
-                <label for="gradeSelect">Select Grade</label>
-                <select id="gradeSelect" class="form-control">
-                  <option value="">Select Grade</option>
-                  <option value="grade1">Grade 1</option>
-                  <option value="grade2">Grade 2</option>
-                  <option value="grade3">Grade 3</option>
-                  <option value="grade4">Grade 4</option>
-                  <option value="grade5">Grade 5</option>
-                  <option value="grade6">Grade 6</option>
-                  <option value="grade7">Grade 7</option>
-                  <option value="grade8">Grade 8</option>
-                  <option value="grade9">Grade 9</option>
-                </select>
-              </div>
-              
-              <div id="lessonList" class="lesson-grid"></div>
-              <div id="loader" class="loader hidden"></div>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <h1>Class Homework Portal</h1>
             </div>
-          </div>
-          
-          <div class="tab-content" id="uploadTabContent">
-            <div class="card">
-              <h2 class="section-title">Upload Lesson</h2>
-              <div id="uploadMessage" class="alert hidden"></div>
-              
-              <div class="form-group">
-                <label for="lessonTitle">Lesson Title</label>
-                <input type="text" id="lessonTitle" class="form-control" placeholder="Enter lesson title" />
-              </div>
-              
-              <div class="form-group">
-                <label for="lessonDesc">Description</label>
-                <textarea id="lessonDesc" class="form-control" placeholder="Enter lesson description"></textarea>
-              </div>
-              
-              <div class="form-group">
-                <label for="lessonGrade">Grade</label>
-                <select id="lessonGrade" class="form-control">
-                  <option value="">Select Grade</option>
-                  <option value="grade1">Grade 1</option>
-                  <option value="grade2">Grade 2</option>
-                  <option value="grade3">Grade 3</option>
-                  <option value="grade4">Grade 4</option>
-                  <option value="grade5">Grade 5</option>
-                  <option value="grade6">Grade 6</option>
-                  <option value="grade7">Grade 7</option>
-                  <option value="grade8">Grade 8</option>
-                  <option value="grade9">Grade 9</option>
-                </select>
-              </div>
-              
-              <div class="form-group">
-                <label>Upload File</label>
-                <div class="file-upload" id="fileUploadArea">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <p>Click to select a file or drag it here</p>
-                  <p class="file-name" id="fileName">No file selected</p>
-                  <input type="file" id="lessonFile" />
+            <div class="user-controls">
+                <span>Welcome, <strong>Mr. Johnson</strong></span>
+                <button class="btn btn-outline"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-target="dashboard">Dashboard</div>
+            <div class="tab" data-target="homework">Homework</div>
+            <div class="tab" data-target="students">Students</div>
+            <div class="tab" data-target="submissions">Submissions</div>
+        </div>
+        
+        <!-- Dashboard Content -->
+        <div id="dashboard" class="content active">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <strong>Welcome to the Class Portal!</strong> Post homework assignments, track student submissions, 
+                    and manage your class all in one place.
                 </div>
-              </div>
-              
-              <button id="uploadLessonBtn" class="btn">Upload Lesson</button>
             </div>
-          </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-tachometer-alt"></i> Class Overview</h2>
+                </div>
+                <div class="stats">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div class="stat-card" style="background: #e3f2fd; padding: 20px; border-radius: var(--border-radius); text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: var(--primary);">13</div>
+                            <div style="color: var(--gray);">Students</div>
+                        </div>
+                        <div class="stat-card" style="background: #e8f5e9; padding: 20px; border-radius: var(--border-radius); text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #2e7d32;">5</div>
+                            <div style="color: var(--gray);">Active Assignments</div>
+                        </div>
+                        <div class="stat-card" style="background: #fff3e0; padding: 20px; border-radius: var(--border-radius); text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #ef6c00;">42</div>
+                            <div style="color: var(--gray);">Submissions This Month</div>
+                        </div>
+                        <div class="stat-card" style="background: #fbe9e7; padding: 20px; border-radius: var(--border-radius); text-align: center;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #d84315;">2</div>
+                            <div style="color: var(--gray);">Pending Reviews</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-tasks"></i> Recent Homework</h2>
+                    <button class="btn btn-primary" id="addHomeworkBtn"><i class="fas fa-plus"></i> Add Homework</button>
+                </div>
+                
+                <div class="homework-list">
+                    <div class="homework-item">
+                        <h3 class="homework-title"><i class="fas fa-book"></i> Math: Quadratic Equations</h3>
+                        <div class="homework-meta">
+                            <span>Due: May 15, 2023</span>
+                            <span>12/13 Submitted</span>
+                        </div>
+                        <div class="homework-description">
+                            Solve quadratic equations using factoring, completing the square, and quadratic formula. Complete problems 1-25 on page 204.
+                        </div>
+                        <span class="status-badge status-completed">Active</span>
+                    </div>
+                    
+                    <div class="homework-item">
+                        <h3 class="homework-title"><i class="fas fa-flask"></i> Science: Photosynthesis Lab</h3>
+                        <div class="homework-meta">
+                            <span>Due: May 18, 2023</span>
+                            <span>8/13 Submitted</span>
+                        </div>
+                        <div class="homework-description">
+                            Complete lab report with observations, analysis, and conclusions based on our photosynthesis experiment.
+                        </div>
+                        <span class="status-badge status-pending">Active</span>
+                    </div>
+                    
+                    <div class="homework-item">
+                        <h3 class="homework-title"><i class="fas fa-book"></i> Literature Essay</h3>
+                        <div class="homework-meta">
+                            <span>Due: May 10, 2023</span>
+                            <span>13/13 Submitted</span>
+                        </div>
+                        <div class="homework-description">
+                            5-page essay analyzing the symbolism in "To Kill a Mockingbird". Use at least 3 academic sources.
+                        </div>
+                        <span class="status-badge status-completed">Graded</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </section>
-    </main>
-    
-    <footer style="text-align: center; padding: 20px; color: #666; font-size: 0.9rem;">
-      <p>Secure Homework Portal &copy; 2023 | All rights reserved</p>
-    </footer>
-  </div>
-
-  <script>
-    // Firebase configuration - REPLACE WITH YOUR ACTUAL CONFIG
-    const firebaseConfig = {
-      apiKey: "AIzaSyDmXK2rYvjDd9vGp5zS6rLkHlJbF3eTq4w",
-      authDomain: "secure-homework-portal.firebaseapp.com",
-      projectId: "secure-homeport-12345",
-      storageBucket: "secure-homeport-12345.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdef1234567890abcdef"
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    // DOM Elements
-    const authSection = document.getElementById('authSection');
-    const appContent = document.getElementById('appContent');
-    const userGreeting = document.getElementById('userGreeting');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const registerBtn = document.getElementById('registerBtn');
-    const loginBtn = document.getElementById('loginBtn');
-    const uploadTab = document.getElementById('uploadTab');
-    const uploadLessonBtn = document.getElementById('uploadLessonBtn');
-    const fileUploadArea = document.getElementById('fileUploadArea');
-    const lessonFile = document.getElementById('lessonFile');
-    const fileName = document.getElementById('fileName');
-    const gradeSelect = document.getElementById('gradeSelect');
-    const lessonList = document.getElementById('lessonList');
-    const loader = document.getElementById('loader');
-    const authMessage = document.getElementById('authMessage');
-    const uploadMessage = document.getElementById('uploadMessage');
-    
-    // Current user data
-    let currentUser = null;
-    let userRole = null;
-
-    // File upload handling
-    fileUploadArea.addEventListener('click', () => lessonFile.click());
-    lessonFile.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        fileName.textContent = e.target.files[0].name;
-      } else {
-        fileName.textContent = 'No file selected';
-      }
-    });
-
-    // Drag and drop for file upload
-    fileUploadArea.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      fileUploadArea.style.borderColor = '#4361ee';
-      fileUploadArea.style.backgroundColor = '#f0f4ff';
-    });
-
-    fileUploadArea.addEventListener('dragleave', () => {
-      fileUploadArea.style.borderColor = '#ddd';
-      fileUploadArea.style.backgroundColor = '';
-    });
-
-    fileUploadArea.addEventListener('drop', (e) => {
-      e.preventDefault();
-      fileUploadArea.style.borderColor = '#ddd';
-      fileUploadArea.style.backgroundColor = '';
-      
-      if (e.dataTransfer.files.length > 0) {
-        lessonFile.files = e.dataTransfer.files;
-        fileName.textContent = e.dataTransfer.files[0].name;
-      }
-    });
-
-    // Tab switching
-    document.querySelectorAll('.tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs and content
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         
-        // Add active class to clicked tab
-        tab.classList.add('active');
-        
-        // Show corresponding content
-        const tabName = tab.getAttribute('data-tab');
-        document.getElementById(`${tabName}Tab`).classList.add('active');
-      });
-    });
-
-    // Authentication state observer
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        // User is signed in
-        currentUser = user;
-        
-        // Get user data from Firestore
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        
-        if (userDoc.exists) {
-          const userData = userDoc.data();
-          userRole = userData.role;
-          
-          // Update UI
-          userGreeting.textContent = `Welcome, ${user.email}`;
-          authSection.classList.add('hidden');
-          appContent.classList.remove('hidden');
-          logoutBtn.classList.remove('hidden');
-          
-          // Show upload tab only for teachers
-          if (userRole === 'teacher') {
-            uploadTab.classList.remove('hidden');
-          } else {
-            uploadTab.classList.add('hidden');
-          }
-        } else {
-          // User document doesn't exist
-          showAuthMessage('User data not found. Please register again.', 'error');
-          await auth.signOut();
-        }
-      } else {
-        // User is signed out
-        currentUser = null;
-        userRole = null;
-        authSection.classList.remove('hidden');
-        appContent.classList.add('hidden');
-        logoutBtn.classList.add('hidden');
-        userGreeting.textContent = 'Welcome, Guest';
-      }
-    });
-
-    // Register new user
-    registerBtn.addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const role = document.getElementById('role').value;
-      
-      if (!email || !password) {
-        showAuthMessage('Please enter email and password', 'error');
-        return;
-      }
-      
-      try {
-        // Create user with Firebase Auth
-        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-        
-        // Create user document in Firestore
-        await db.collection('users').doc(userCredential.user.uid).set({
-          email: email,
-          role: role,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        showAuthMessage('Registration successful!', 'success');
-      } catch (error) {
-        showAuthMessage(error.message, 'error');
-      }
-    });
-
-    // Login existing user
-    loginBtn.addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      
-      if (!email || !password) {
-        showAuthMessage('Please enter email and password', 'error');
-        return;
-      }
-      
-      try {
-        await auth.signInWithEmailAndPassword(email, password);
-      } catch (error) {
-        showAuthMessage(error.message, 'error');
-      }
-    });
-
-    // Logout
-    logoutBtn.a
+        <!-- Homework Content -->
+        <div id="homework" class="content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-book"></i> Create New Homework</h2>
+                </div>
+                
+                <form id="homeworkForm">
+                    <div class="form-group">
+                        <label for="homeworkTitle">Title</label>
+                        <input type="text" id="homeworkTitle" class="form-control" placeholder="Enter homework title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="homeworkSubject">Subject</label>
+                        <select id="homeworkSubject" class="form-control" required>
+                            <option value="">Select Subject</option>
+                            <option value="math">Mathematics</option>
+                            <option value="science">Science</option>
+                            <option value="english">English Literature</option>
+                            <option value="history">History</option>
+                            <option value="art">Art</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="dueDate">Due Date</label>
+                        <input type="date" id="dueDate" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="homeworkDescription">Description</label>
+                        <textarea id="homeworkDescription" class="form-control" placeholder="Enter detailed homework description" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="attachments">Attachments</label>
+                        <input type="file" id="attachments" class="form-control">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Post Homework</button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <div class="ca
