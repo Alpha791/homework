@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Homework Portal with Grading</title>
+  <title>Grade 5 Homework</title>
   <style>
     :root {
       --bg-color: #f5f5f5;
@@ -151,6 +151,11 @@
     .theme-btn {
       background-color: var(--secondary-color);
     }
+
+    .password-field {
+      display: none;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -164,7 +169,10 @@
   <div id="loginPanel" class="active">
     <div class="login-form">
       <h2 style="text-align: center;">Login</h2>
-      <input type="text" id="username" placeholder="Your name (use 'teacher' for teacher access)">
+      <input type="text" id="username" placeholder="Your name">
+      <div id="passwordField" class="password-field">
+        <input type="password" id="password" placeholder="Teacher password (1234)">
+      </div>
       <button id="loginBtn" style="width: 100%;">Login</button>
     </div>
   </div>
@@ -188,7 +196,8 @@
 
   <script>
     // Database key for localStorage
-    const dbKey = "homework_portal_data_v3";
+    const dbKey = "homework_portal_data_v4";
+    const TEACHER_PASSWORD = "1234";
     
     // Initialize or load data
     function loadData() {
@@ -220,6 +229,14 @@
     }
     
     let currentUser = "";
+    let isTeacher = false;
+    
+    // Check if username is teacher (show password field)
+    document.getElementById("username").addEventListener("input", function() {
+      const username = this.value.trim().toLowerCase();
+      const passwordField = document.getElementById("passwordField");
+      passwordField.style.display = username === "teacher" ? "block" : "none";
+    });
     
     // Login function
     function login() {
@@ -229,9 +246,21 @@
         return;
       }
       
+      // Check if teacher login
+      if (currentUser.toLowerCase() === "teacher") {
+        const password = document.getElementById("password").value;
+        if (password !== TEACHER_PASSWORD) {
+          alert("Incorrect teacher password");
+          return;
+        }
+        isTeacher = true;
+      } else {
+        isTeacher = false;
+      }
+      
       document.getElementById("loginPanel").classList.remove("active");
       
-      if (currentUser.toLowerCase() === "teacher") {
+      if (isTeacher) {
         document.getElementById("teacherPanel").classList.add("active");
         renderHomeworkList();
       } else {
@@ -367,7 +396,7 @@
       renderMySubmission(homeworkId);
       
       // If teacher is logged in, update their view
-      if (currentUser === "teacher") {
+      if (isTeacher) {
         renderSubmissions(homeworkId);
       }
       
@@ -399,16 +428,14 @@
             <strong>${sub.student}</strong>
             <p>${sub.answer}</p>
             <small>Submitted on ${new Date(sub.date).toLocaleString()}</small>
-            ${currentUser === "teacher" ? `
-              <div class="grade-buttons">
-                <button class="grade-btn correct-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'correct')">
-                  Mark Correct
-                </button>
-                <button class="grade-btn wrong-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'wrong')">
-                  Mark Wrong
-                </button>
-              </div>
-            ` : ''}
+            <div class="grade-buttons">
+              <button class="grade-btn correct-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'correct')">
+                Mark Correct
+              </button>
+              <button class="grade-btn wrong-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'wrong')">
+                Mark Wrong
+              </button>
+            </div>
           </div>
         `;
       }).join("");
