@@ -4,146 +4,88 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homework Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
       max-width: 800px;
       margin: 0 auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-    header {
-      background: #2b4a6f;
-      color: white;
-      padding: 1rem;
-      text-align: center;
+      padding: 20px;
     }
     .panel {
       display: none;
-      padding: 1rem;
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
     .panel.active {
       display: block;
     }
-    .form-group {
-      margin-bottom: 1rem;
-    }
-    input, textarea {
-      width: 100%;
+    .homework {
+      margin: 15px 0;
       padding: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #eee;
       border-radius: 5px;
     }
-    .btn {
-      background: #2b4a6f;
+    textarea {
+      width: 100%;
+      margin: 10px 0;
+    }
+    button {
+      padding: 8px 15px;
+      background: #4CAF50;
       color: white;
       border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
+      border-radius: 4px;
       cursor: pointer;
     }
-    .homework-item {
-      background: white;
-      border-radius: 5px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      border-left: 4px solid #4a8cff;
-    }
-    .status-badge {
-      padding: 3px 8px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-    }
-    .status-correct {
-      background: #28a745;
-      color: white;
-    }
-    .status-incorrect {
-      background: #dc3545;
-      color: white;
+    .submission {
+      margin: 10px 0;
+      padding: 10px;
+      background: #f9f9f9;
+      border-left: 3px solid #4CAF50;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1><i class="fas fa-book-open"></i> Homework Portal</h1>
-      <div id="userInfo"></div>
-    </header>
+  <h1>Homework Portal</h1>
 
-    <!-- Login Section -->
-    <section class="panel active" id="loginPanel">
-      <div class="form-group">
-        <label>Enter your name:</label>
-        <input type="text" id="username" placeholder="student1 or teacher">
-      </div>
-      <button class="btn" id="loginBtn">Login</button>
-    </section>
+  <!-- Login Section -->
+  <div id="loginPanel" class="active">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Your name">
+    <button id="loginBtn">Login</button>
+  </div>
 
-    <!-- Teacher Panel -->
-    <section class="panel" id="teacherPanel">
-      <div class="form-group">
-        <label>Homework Title:</label>
-        <input type="text" id="homeworkTitle">
-      </div>
-      <div class="form-group">
-        <label>Description:</label>
-        <textarea id="homeworkText" rows="4"></textarea>
-      </div>
-      <button class="btn" onclick="postHomework()">Post Homework</button>
-      
-      <h3>Posted Homeworks</h3>
-      <div id="homeworkList"></div>
-      
-      <h3>Student Submissions</h3>
-      <select id="homeworkSelect" onchange="loadSubmissions()">
-        <option value="">Select Homework</option>
-      </select>
-      <div id="submissions"></div>
-    </section>
+  <!-- Teacher Panel -->
+  <div id="teacherPanel" class="panel">
+    <h2>Post New Homework</h2>
+    <input type="text" id="homeworkTitle" placeholder="Homework title">
+    <textarea id="homeworkText" placeholder="Homework description"></textarea>
+    <button onclick="postHomework()">Post Homework</button>
+    
+    <h2>Posted Homeworks</h2>
+    <div id="homeworkList"></div>
+  </div>
 
-    <!-- Student Panel -->
-    <section class="panel" id="studentPanel">
-      <h3>Available Homeworks</h3>
-      <div id="studentHomeworkList"></div>
-      
-      <div class="form-group">
-        <select id="studentHomeworkSelect" onchange="loadSelectedHomework()">
-          <option value="">Select Homework</option>
-        </select>
-      </div>
-      
-      <div id="selectedHomeworkContainer" style="display:none">
-        <div id="selectedHomeworkContent"></div>
-        <textarea id="studentAnswer" rows="4"></textarea>
-        <button class="btn" onclick="submitHomework()">Submit</button>
-      </div>
-      
-      <h3>My Grades</h3>
-      <div id="gradesList"></div>
-    </section>
+  <!-- Student Panel -->
+  <div id="studentPanel" class="panel">
+    <h2>Available Homeworks</h2>
+    <div id="studentHomeworkList"></div>
   </div>
 
   <script>
-    const dbKey = "homework_portal";
+    const dbKey = "homework_portal_data";
     
     function saveData(data) {
       localStorage.setItem(dbKey, JSON.stringify(data));
     }
     
     function loadData() {
-      return JSON.parse(localStorage.getItem(dbKey)) || {
+      const data = JSON.parse(localStorage.getItem(dbKey));
+      return data || {
         homeworks: [],
-        submissions: {},
-        grades: {}
+        submissions: {}
       };
     }
     
@@ -153,8 +95,7 @@
       currentUser = document.getElementById("username").value.trim();
       if (!currentUser) return alert("Please enter your name");
       
-      document.getElementById("loginPanel").style.display = "none";
-      document.getElementById("userInfo").textContent = `Logged in as: ${currentUser}`;
+      document.getElementById("loginPanel").classList.remove("active");
       
       if (currentUser.toLowerCase() === "teacher") {
         document.getElementById("teacherPanel").classList.add("active");
@@ -168,7 +109,8 @@
     function postHomework() {
       const title = document.getElementById("homeworkTitle").value.trim();
       const content = document.getElementById("homeworkText").value.trim();
-      if (!title || !content) return alert("Title and description are required");
+      
+      if (!title || !content) return alert("Please fill all fields");
       
       const data = loadData();
       data.homeworks.push({
@@ -182,69 +124,114 @@
       document.getElementById("homeworkTitle").value = "";
       document.getElementById("homeworkText").value = "";
       renderHomeworkList();
-      alert("Homework posted!");
+      alert("Homework posted successfully!");
     }
     
     function renderHomeworkList() {
       const data = loadData();
       const container = document.getElementById("homeworkList");
-      container.innerHTML = data.homeworks.map(hw => `
-        <div class="homework-item">
-          <h4>${hw.title}</h4>
+      container.innerHTML = "";
+      
+      data.homeworks.forEach(hw => {
+        const hwElement = document.createElement("div");
+        hwElement.className = "homework";
+        hwElement.innerHTML = `
+          <h3>${hw.title}</h3>
           <p>${hw.content}</p>
-          <button onclick="deleteHomework(${hw.id})">Delete</button>
-        </div>
-      `).join('');
+          <h4>Submissions:</h4>
+          <div id="submissions-${hw.id}"></div>
+        `;
+        container.appendChild(hwElement);
+        renderSubmissions(hw.id);
+      });
     }
     
     function renderStudentHomeworkList() {
       const data = loadData();
       const container = document.getElementById("studentHomeworkList");
-      container.innerHTML = data.homeworks.map(hw => `
-        <div class="homework-item">
-          <h4>${hw.title}</h4>
+      container.innerHTML = "";
+      
+      data.homeworks.forEach(hw => {
+        const hwElement = document.createElement("div");
+        hwElement.className = "homework";
+        hwElement.innerHTML = `
+          <h3>${hw.title}</h3>
           <p>${hw.content}</p>
-          ${getGradeDisplay(hw.id)}
-        </div>
-      `).join('');
-    }
-    
-    function getGradeDisplay(homeworkId) {
-      const data = loadData();
-      const grade = data.grades[homeworkId]?.[currentUser];
-      if (!grade) return '';
-      return `<span class="status-badge status-${grade}">${grade === 'correct' ? '✓ Correct' : '✗ Incorrect'}</span>`;
-    }
-    
-    function loadSubmissions() {
-      const homeworkId = document.getElementById("homeworkSelect").value;
-      if (!homeworkId) return;
-      
-      const data = loadData();
-      const submissions = data.submissions[homeworkId] || {};
-      const container = document.getElementById("submissions");
-      
-      container.innerHTML = Object.entries(submissions).map(([student, answer]) => {
-        const grade = data.grades[homeworkId]?.[student] || 'ungraded';
-        return `
-          <div class="homework-item">
-            <h4>${student}</h4>
-            <p>${answer}</p>
-            ${grade === 'ungraded' ? `
-              <button onclick="gradeSubmission(${homeworkId}, '${student}', 'correct')">Correct</button>
-              <button onclick="gradeSubmission(${homeworkId}, '${student}', 'incorrect')">Incorrect</button>
-            ` : ''}
-          </div>
+          <textarea id="answer-${hw.id}" placeholder="Your answer"></textarea>
+          <button onclick="submitAnswer(${hw.id})">Submit Answer</button>
+          <div id="my-submission-${hw.id}"></div>
         `;
-      }).join('');
+        container.appendChild(hwElement);
+        renderMySubmission(hw.id);
+      });
     }
     
-    function gradeSubmission(homeworkId, student, grade) {
+    function submitAnswer(homeworkId) {
+      const answer = document.getElementById(`answer-${homeworkId}`).value.trim();
+      if (!answer) return alert("Please write your answer");
+      
       const data = loadData();
-      if (!data.grades[homeworkId]) data.grades[homeworkId] = {};
-      data.grades[homeworkId][student] = grade;
+      if (!data.submissions[homeworkId]) {
+        data.submissions[homeworkId] = [];
+      }
+      
+      // Check if already submitted
+      const existingIndex = data.submissions[homeworkId].findIndex(
+        sub => sub.student === currentUser
+      );
+      
+      const submission = {
+        student: currentUser,
+        answer: answer,
+        date: new Date().toISOString()
+      };
+      
+      if (existingIndex >= 0) {
+        data.submissions[homeworkId][existingIndex] = submission;
+      } else {
+        data.submissions[homeworkId].push(submission);
+      }
+      
       saveData(data);
-      loadSubmissions();
+      renderMySubmission(homeworkId);
+      if (currentUser === "teacher") {
+        renderSubmissions(homeworkId);
+      }
+      alert("Answer submitted successfully!");
+    }
+    
+    function renderSubmissions(homeworkId) {
+      const data = loadData();
+      const container = document.getElementById(`submissions-${homeworkId}`);
+      if (!container) return;
+      
+      const submissions = data.submissions[homeworkId] || [];
+      container.innerHTML = submissions.length ? 
+        submissions.map(sub => `
+          <div class="submission">
+            <strong>${sub.student}</strong>
+            <p>${sub.answer}</p>
+            <small>${new Date(sub.date).toLocaleString()}</small>
+          </div>
+        `).join("") :
+        "<p>No submissions yet</p>";
+    }
+    
+    function renderMySubmission(homeworkId) {
+      const data = loadData();
+      const container = document.getElementById(`my-submission-${homeworkId}`);
+      if (!container) return;
+      
+      const submissions = data.submissions[homeworkId] || [];
+      const mySubmission = submissions.find(sub => sub.student === currentUser);
+      
+      container.innerHTML = mySubmission ? `
+        <div class="submission">
+          <h4>Your Submission:</h4>
+          <p>${mySubmission.answer}</p>
+          <small>Submitted on ${new Date(mySubmission.date).toLocaleString()}</small>
+        </div>
+      ` : "";
     }
     
     document.getElementById("loginBtn").addEventListener("click", login);
