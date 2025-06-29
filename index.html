@@ -1,159 +1,146 @@
 <!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Homework Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
+      background: #f4f6f8;
       margin: 0;
       padding: 0;
     }
-    header {
-      background-color: #2c3e50;
-      color: white;
-      padding: 1rem;
-      text-align: center;
-    }
     .container {
+      max-width: 800px;
+      margin: 2rem auto;
       padding: 2rem;
-      max-width: 900px;
-      margin: auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
-    .homework {
-      background-color: #ffffff;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    h1 {
+      color: #2b4a6f;
     }
-    .homework-title {
-      font-weight: bold;
-      font-size: 1.2rem;
+    .homework-box, .response-box {
+      margin: 1rem 0;
     }
-    textarea {
+    textarea, input {
       width: 100%;
-      height: 100px;
-      margin-top: 10px;
       padding: 10px;
-      border-radius: 5px;
+      border-radius: 6px;
       border: 1px solid #ccc;
+      margin-top: 5px;
+      font-size: 1rem;
     }
     button {
       margin-top: 10px;
-      padding: 10px 20px;
-      background-color: #3498db;
-      border: none;
+      background: #2b4a6f;
       color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
-      border-radius: 5px;
     }
     button:hover {
-      background-color: #2980b9;
+      background: #1e3450;
     }
-    .teacher-login {
-      margin-top: 2rem;
-      text-align: center;
-    }
-    input[type="password"] {
-      padding: 8px;
-      width: 200px;
-      margin-top: 10px;
-    }
-    select, input[type="text"] {
-      padding: 8px;
-      width: 100%;
-      margin-top: 10px;
+    .login {
+      margin-bottom: 2rem;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Class Homework Portal</h1>
-    <p>Homework Posting and Private Student Submissions</p>
-  </header>  <div class="container" id="portal">
-    <div id="homeworkArea"></div><div class="teacher-login">
-  <h3>Teacher Login</h3>
-  <input type="password" id="teacherPassword" placeholder="Enter teacher password">
-  <button onclick="viewSubmissions()">Login</button>
-  <div id="teacherView"></div>
+  <div class="container">
+    <h1>Class Homework Portal</h1><div class="login" id="loginPanel">
+  <label for="username">Enter your name (Student or 'teacher'):</label>
+  <input type="text" id="username" placeholder="e.g., student1 or teacher">
+  <button id="loginBtn">Login</button>
+</div>
+
+<div id="teacherPanel" style="display: none">
+  <h2>Post Homework</h2>
+  <textarea id="homeworkText" rows="4" placeholder="Enter homework..."></textarea>
+  <button onclick="postHomework()">Post Homework</button>
+  <h3>Student Submissions</h3>
+  <div id="submissions"></div>
+</div>
+
+<div id="studentPanel" style="display: none">
+  <h2>Homework</h2>
+  <div id="displayHomework"></div>
+  <div class="response-box">
+    <textarea id="studentAnswer" rows="4" placeholder="Write your homework answer..."></textarea>
+    <button onclick="submitHomework()">Submit Answer</button>
+  </div>
 </div>
 
   </div>  <script>
-    const homeworks = [
-      {
-        id: 1,
-        title: "Essay on Climate Change",
-        description: "Write an essay about climate change. Minimum 300 words. Submit before Friday."
-      },
-      {
-        id: 2,
-        title: "Math Practice - Algebra",
-        description: "Solve questions 1 to 10 on page 57 of your textbook."
-      },
-      {
-        id: 3,
-        title: "Science Experiment Report",
-        description: "Submit your experiment report on photosynthesis. Include diagrams."
+    const dbKey = "frigates_homework_portal";
+
+    const saveData = (data) => localStorage.setItem(dbKey, JSON.stringify(data));
+    const loadData = () => JSON.parse(localStorage.getItem(dbKey)) || {
+      homework: "",
+      submissions: {},
+    };
+
+    let currentUser = "";
+    const login = () => {
+      currentUser = document.getElementById("username").value.trim().toLowerCase();
+      if (!currentUser) return alert("Enter your name");
+      if (currentUser === "teacher") {
+        document.getElementById("teacherPanel").style.display = "block";
+        loadHomework();
+        loadSubmissions();
+      } else {
+        document.getElementById("studentPanel").style.display = "block";
+        loadHomework();
+        loadStudentSubmission();
       }
-    ];
+      document.getElementById("loginPanel").style.display = "none";
+    };
 
-    const students = ["Student1", "Student2", "Student3", "Student4", "Student5", "Student6", "Student7", "Student8", "Student9", "Student10", "Student11", "Student12", "Student13"];
-    const homeworkArea = document.getElementById("homeworkArea");
-    let submissions = {};
+    const postHomework = () => {
+      const data = loadData();
+      data.homework = document.getElementById("homeworkText").value;
+      data.submissions = {}; // clear old submissions
+      saveData(data);
+      alert("Homework posted successfully!");
+      loadHomework();
+      loadSubmissions();
+    };
 
-    function createHomeworkBlock() {
-      homeworks.forEach(hw => {
-        const hwDiv = document.createElement('div');
-        hwDiv.className = 'homework';
-        hwDiv.innerHTML = `
-          <div class="homework-title">${hw.title}</div>
-          <p>${hw.description}</p>
-          <label for="studentName_${hw.id}">Select Your Name:</label>
-          <select id="studentName_${hw.id}">
-            ${students.map(s => `<option value="${s}">${s}</option>`).join('')}
-          </select>
-          <textarea id="studentAnswer_${hw.id}" placeholder="Write your homework here..."></textarea><button onclick="submitHomework(${hw.id})">Submit</button>
-    `;
-    homeworkArea.appendChild(hwDiv);
-  });
-}
+    const loadHomework = () => {
+      const data = loadData();
+      document.getElementById("displayHomework").innerText = data.homework;
+      document.getElementById("homeworkText").value = data.homework;
+    };
 
-function submitHomework(hwId) {
-  const name = document.getElementById(`studentName_${hwId}`).value;
-  const answer = document.getElementById(`studentAnswer_${hwId}`).value;
-  if (answer.trim() === '') {
-    alert("Please write your homework before submitting.");
-    return;
-  }
-  if (!submissions[hwId]) submissions[hwId] = {};
-  submissions[hwId][name] = answer;
-  alert("Homework submitted successfully. Only the teacher can view it.");
-  document.getElementById(`studentAnswer_${hwId}`).value = '';
-}
+    const submitHomework = () => {
+      const data = loadData();
+      const answer = document.getElementById("studentAnswer").value;
+      if (!answer) return alert("Answer can't be empty");
+      data.submissions[currentUser] = answer;
+      saveData(data);
+      alert("Submitted successfully");
+    };
 
-function viewSubmissions() {
-  const pwd = document.getElementById("teacherPassword").value;
-  if (pwd !== 'teacher123') {
-    alert("Incorrect password!");
-    return;
-  }
-  let html = '<h3>All Student Submissions</h3>';
-  homeworks.forEach(hw => {
-    html += `<div class='homework'><strong>${hw.title}</strong><br>`;
-    students.forEach(s => {
-      const ans = submissions[hw.id] && submissions[hw.id][s] ? submissions[hw.id][s] : 'No submission yet.';
-      html += `<div><strong>${s}:</strong> ${ans}</div>`;
-    });
-    html += `</div>`;
-  });
-  document.getElementById("teacherView").innerHTML = html;
-}
+    const loadSubmissions = () => {
+      const data = loadData();
+      const submissions = data.submissions;
+      let html = "";
+      for (const student in submissions) {
+        html += `<strong>${student}:</strong><p>${submissions[student]}</p><hr />`;
+      }
+      document.getElementById("submissions").innerHTML = html;
+    };
 
-createHomeworkBlock();
+    const loadStudentSubmission = () => {
+      const data = loadData();
+      if (data.submissions[currentUser]) {
+        document.getElementById("studentAnswer").value = data.submissions[currentUser];
+      }
+    };
 
-  </script>
-</body>
+    document.getElementById("loginBtn").addEventListener("click", login);
+  </script></body>
 </html>
