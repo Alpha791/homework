@@ -1,179 +1,487 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Homework Portal with Grading</title>
   <style>
     :root {
-      --bg-color: #f4f6f8;
-      --text-color: #000;
-      --card-bg: #fff;
+      --bg-color: #f5f5f5;
+      --text-color: #333;
+      --panel-bg: #fff;
+      --border-color: #ddd;
+      --primary-color: #4CAF50;
+      --secondary-color: #2196F3;
+      --error-color: #f44336;
+      --correct-color: #4CAF50;
+      --wrong-color: #f44336;
+      --hover-color: #e9e9e9;
     }
-    body.dark-mode {
+
+    .dark-mode {
       --bg-color: #121212;
-      --text-color: #e0e0e0;
-      --card-bg: #1e1e1e;
+      --text-color: #f5f5f5;
+      --panel-bg: #1e1e1e;
+      --border-color: #444;
+      --primary-color: #4CAF50;
+      --secondary-color: #2196F3;
+      --hover-color: #333;
     }
+
     body {
       font-family: Arial, sans-serif;
-      background: var(--bg-color);
+      background-color: var(--bg-color);
       color: var(--text-color);
-      margin: 0;
-      padding: 0;
-    }
-    .container {
       max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
-      background: var(--card-bg);
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+      transition: all 0.3s ease;
     }
-    h1, h2, h3 {
-      color: var(--text-color);
+
+    .theme-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
     }
-    textarea, input {
+
+    .panel {
+      display: none;
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--panel-bg);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .homework {
+      margin: 15px 0;
+      padding: 15px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--panel-bg);
+    }
+
+    input, textarea, select {
       width: 100%;
+      margin: 10px 0;
       padding: 10px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      margin-top: 5px;
-      font-size: 1rem;
-      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background-color: var(--panel-bg);
       color: var(--text-color);
     }
+
     button {
-      margin-top: 10px;
-      background: #2b4a6f;
+      padding: 10px 15px;
+      background-color: var(--primary-color);
       color: white;
-      padding: 10px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 4px;
       cursor: pointer;
+      margin-right: 10px;
+      margin-top: 10px;
+      transition: background-color 0.3s;
     }
+
     button:hover {
-      background: #1e3450;
+      opacity: 0.9;
     }
-    .login {
-      margin-bottom: 2rem;
+
+    .submission {
+      margin: 15px 0;
+      padding: 15px;
+      background-color: var(--panel-bg);
+      border-left: 3px solid var(--secondary-color);
+      position: relative;
     }
-    .toggle-mode {
-      float: right;
-      margin-top: -40px;
+
+    .grade-buttons {
+      margin-top: 15px;
     }
-    .grade-input {
-      width: 100px;
-      margin-top: 5px;
+
+    .grade-btn {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .correct-btn {
+      background-color: var(--correct-color);
+    }
+
+    .wrong-btn {
+      background-color: var(--wrong-color);
+    }
+
+    .grade-status {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    .correct {
+      color: var(--correct-color);
+    }
+
+    .wrong {
+      color: var(--wrong-color);
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 30px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--panel-bg);
+    }
+
+    h1, h2, h3, h4 {
+      color: var(--text-color);
+    }
+
+    .theme-btn {
+      background-color: var(--secondary-color);
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Homework Portal with Grading</h1>
-    <button class="toggle-mode" onclick="toggleMode()">Toggle Light/Dark Mode</button><div class="login" id="loginPanel">
-  <h2>Login</h2>
-  <label for="username">Enter your name (Student or 'teacher'):</label>
-  <input type="text" id="username" placeholder="e.g., student1 or teacher">
-  <button id="loginBtn">Login</button>
-</div>
+  <div class="theme-switcher">
+    <button class="theme-btn" onclick="toggleTheme()">Toggle Dark Mode</button>
+  </div>
 
-<div id="teacherPanel" style="display: none">
-  <h2>Post New Homework</h2>
-  <textarea id="homeworkText" rows="3" placeholder="Enter homework..."></textarea>
-  <button onclick="postHomework()">Post Homework</button>
-  <h2>Posted Homeworks</h2>
-  <div id="homeworkList"></div>
-</div>
+  <h1 style="text-align: center;">Homework Portal</h1>
 
-<div id="studentPanel" style="display: none">
-  <h2>Available Homeworks</h2>
-  <div id="displayHomework"></div>
-</div>
+  <!-- Login Section -->
+  <div id="loginPanel" class="active">
+    <div class="login-form">
+      <h2 style="text-align: center;">Login</h2>
+      <input type="text" id="username" placeholder="Your name (use 'teacher' for teacher access)">
+      <button id="loginBtn" style="width: 100%;">Login</button>
+    </div>
+  </div>
 
-  </div>  <script>
-    const dbKey = "frigates_homework_portal_v2";
+  <!-- Teacher Panel -->
+  <div id="teacherPanel" class="panel">
+    <h2>Post New Homework</h2>
+    <input type="text" id="homeworkTitle" placeholder="Homework title">
+    <textarea id="homeworkText" rows="4" placeholder="Homework description"></textarea>
+    <button onclick="postHomework()">Post Homework</button>
+    
+    <h2>Posted Homeworks</h2>
+    <div id="homeworkList"></div>
+  </div>
 
-    const saveData = (data) => localStorage.setItem(dbKey, JSON.stringify(data));
-    const loadData = () => JSON.parse(localStorage.getItem(dbKey)) || {
-      homeworks: []
-    };
+  <!-- Student Panel -->
+  <div id="studentPanel" class="panel">
+    <h2>Available Homeworks</h2>
+    <div id="studentHomeworkList"></div>
+  </div>
 
-    let currentUser = "";
-
-    const toggleMode = () => {
-      document.body.classList.toggle("dark-mode");
-    };
-
-    const login = () => {
-      currentUser = document.getElementById("username").value.trim().toLowerCase();
-      if (!currentUser) return alert("Enter your name");
-      document.getElementById("loginPanel").style.display = "none";
-      if (currentUser === "teacher") {
-        document.getElementById("teacherPanel").style.display = "block";
-        renderTeacherHomeworks();
-      } else {
-        document.getElementById("studentPanel").style.display = "block";
-        renderStudentHomeworks();
+  <script>
+    // Database key for localStorage
+    const dbKey = "homework_portal_data_v3";
+    
+    // Initialize or load data
+    function loadData() {
+      const data = JSON.parse(localStorage.getItem(dbKey));
+      return data || {
+        homeworks: [],
+        submissions: {},
+        grades: {}
+      };
+    }
+    
+    // Save data to localStorage
+    function saveData(data) {
+      localStorage.setItem(dbKey, JSON.stringify(data));
+    }
+    
+    // Theme management
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      localStorage.setItem('themePreference', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+    }
+    
+    // Apply saved theme preference
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('themePreference');
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
       }
-    };
-
-    const postHomework = () => {
-      const data = loadData();
+    }
+    
+    let currentUser = "";
+    
+    // Login function
+    function login() {
+      currentUser = document.getElementById("username").value.trim();
+      if (!currentUser) {
+        alert("Please enter your name");
+        return;
+      }
+      
+      document.getElementById("loginPanel").classList.remove("active");
+      
+      if (currentUser.toLowerCase() === "teacher") {
+        document.getElementById("teacherPanel").classList.add("active");
+        renderHomeworkList();
+      } else {
+        document.getElementById("studentPanel").classList.add("active");
+        renderStudentHomeworkList();
+      }
+    }
+    
+    // Post new homework
+    function postHomework() {
+      const title = document.getElementById("homeworkTitle").value.trim();
       const content = document.getElementById("homeworkText").value.trim();
-      if (!content) return alert("Homework cannot be empty.");
-      data.homeworks.push({ content, submissions: {} });
-      saveData(data);
-      document.getElementById("homeworkText").value = "";
-      renderTeacherHomeworks();
-    };
-
-    const renderTeacherHomeworks = () => {
+      
+      if (!title || !content) {
+        alert("Please fill both title and description");
+        return;
+      }
+      
       const data = loadData();
-      const list = document.getElementById("homeworkList");
-      list.innerHTML = "";
-      data.homeworks.forEach((hw, idx) => {
-        let block = `<h3>Homework ${idx + 1}</h3><p>${hw.content}</p>`;
-        for (let student in hw.submissions) {
-          const sub = hw.submissions[student];
-          block += `<strong>${student}:</strong><p>${sub.answer}</p>
-            <label>Grade:</label>
-            <input class='grade-input' value='${sub.grade || ""}' onchange='updateGrade(${idx}, "${student}", this.value)' /><hr />`;
-        }
-        list.innerHTML += block;
+      const homeworkId = Date.now().toString();
+      
+      data.homeworks.push({
+        id: homeworkId,
+        title,
+        content,
+        date: new Date().toISOString()
       });
-    };
-
-    const updateGrade = (hwIndex, student, grade) => {
-      const data = loadData();
-      data.homeworks[hwIndex].submissions[student].grade = grade;
+      
+      // Initialize submissions and grades for this homework
+      if (!data.submissions[homeworkId]) {
+        data.submissions[homeworkId] = [];
+      }
+      if (!data.grades[homeworkId]) {
+        data.grades[homeworkId] = {};
+      }
+      
       saveData(data);
-    };
-
-    const renderStudentHomeworks = () => {
+      
+      // Clear form
+      document.getElementById("homeworkTitle").value = "";
+      document.getElementById("homeworkText").value = "";
+      
+      renderHomeworkList();
+      alert("Homework posted successfully!");
+    }
+    
+    // Render homework list for teacher
+    function renderHomeworkList() {
       const data = loadData();
-      const area = document.getElementById("displayHomework");
-      area.innerHTML = "";
-      data.homeworks.forEach((hw, idx) => {
-        const answer = hw.submissions[currentUser]?.answer || "";
-        const grade = hw.submissions[currentUser]?.grade || "Pending";
-        area.innerHTML += `<h3>Homework ${idx + 1}</h3>
+      const container = document.getElementById("homeworkList");
+      container.innerHTML = "";
+      
+      if (data.homeworks.length === 0) {
+        container.innerHTML = "<p>No homeworks posted yet.</p>";
+        return;
+      }
+      
+      data.homeworks.forEach(hw => {
+        const hwElement = document.createElement("div");
+        hwElement.className = "homework";
+        hwElement.innerHTML = `
+          <h3>${hw.title}</h3>
           <p>${hw.content}</p>
-          <textarea rows='3' onchange='saveStudentAnswer(${idx}, this.value)'>${answer}</textarea><p><strong>Grade:</strong> ${grade}</p><hr />`;
-  });
-};
-
-const saveStudentAnswer = (hwIndex, answer) => {
-  const data = loadData();
-  if (!data.homeworks[hwIndex].submissions[currentUser]) {
-    data.homeworks[hwIndex].submissions[currentUser] = {};
-  }
-  data.homeworks[hwIndex].submissions[currentUser].answer = answer;
-  saveData(data);
-  renderStudentHomeworks();
-};
-
-document.getElementById("loginBtn").addEventListener("click", login);
-
+          <small>Posted on ${new Date(hw.date).toLocaleString()}</small>
+          <h4 style="margin-top: 15px;">Submissions:</h4>
+          <div id="submissions-${hw.id}"></div>
+        `;
+        container.appendChild(hwElement);
+        renderSubmissions(hw.id);
+      });
+    }
+    
+    // Render homework list for student
+    function renderStudentHomeworkList() {
+      const data = loadData();
+      const container = document.getElementById("studentHomeworkList");
+      container.innerHTML = "";
+      
+      if (data.homeworks.length === 0) {
+        container.innerHTML = "<p>No homeworks available yet.</p>";
+        return;
+      }
+      
+      data.homeworks.forEach(hw => {
+        const hwElement = document.createElement("div");
+        hwElement.className = "homework";
+        hwElement.innerHTML = `
+          <h3>${hw.title}</h3>
+          <p>${hw.content}</p>
+          <small>Posted on ${new Date(hw.date).toLocaleString()}</small>
+          <textarea id="answer-${hw.id}" rows="4" placeholder="Your answer"></textarea>
+          <button onclick="submitAnswer('${hw.id}')">Submit Answer</button>
+          <div id="my-submission-${hw.id}" style="margin-top: 15px;"></div>
+        `;
+        container.appendChild(hwElement);
+        renderMySubmission(hw.id);
+      });
+    }
+    
+    // Submit student answer
+    function submitAnswer(homeworkId) {
+      const answer = document.getElementById(`answer-${homeworkId}`).value.trim();
+      if (!answer) {
+        alert("Please write your answer");
+        return;
+      }
+      
+      const data = loadData();
+      if (!data.submissions[homeworkId]) {
+        data.submissions[homeworkId] = [];
+      }
+      
+      // Check if already submitted
+      const existingIndex = data.submissions[homeworkId].findIndex(
+        sub => sub.student === currentUser
+      );
+      
+      const submission = {
+        student: currentUser,
+        answer: answer,
+        date: new Date().toISOString()
+      };
+      
+      if (existingIndex >= 0) {
+        // Update existing submission
+        data.submissions[homeworkId][existingIndex] = submission;
+      } else {
+        // Add new submission
+        data.submissions[homeworkId].push(submission);
+      }
+      
+      saveData(data);
+      renderMySubmission(homeworkId);
+      
+      // If teacher is logged in, update their view
+      if (currentUser === "teacher") {
+        renderSubmissions(homeworkId);
+      }
+      
+      alert("Answer submitted successfully!");
+      document.getElementById(`answer-${homeworkId}`).value = "";
+    }
+    
+    // Render submissions for a homework (teacher view)
+    function renderSubmissions(homeworkId) {
+      const data = loadData();
+      const container = document.getElementById(`submissions-${homeworkId}`);
+      if (!container) return;
+      
+      const submissions = data.submissions[homeworkId] || [];
+      const grades = data.grades[homeworkId] || {};
+      
+      if (submissions.length === 0) {
+        container.innerHTML = "<p>No submissions yet.</p>";
+        return;
+      }
+      
+      container.innerHTML = submissions.map(sub => {
+        const grade = grades[sub.student];
+        return `
+          <div class="submission">
+            <div class="grade-status ${grade || ''}">
+              ${grade === 'correct' ? '✓' : grade === 'wrong' ? '✗' : ''}
+            </div>
+            <strong>${sub.student}</strong>
+            <p>${sub.answer}</p>
+            <small>Submitted on ${new Date(sub.date).toLocaleString()}</small>
+            ${currentUser === "teacher" ? `
+              <div class="grade-buttons">
+                <button class="grade-btn correct-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'correct')">
+                  Mark Correct
+                </button>
+                <button class="grade-btn wrong-btn" onclick="gradeSubmission('${homeworkId}', '${sub.student}', 'wrong')">
+                  Mark Wrong
+                </button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join("");
+    }
+    
+    // Grade a submission
+    function gradeSubmission(homeworkId, student, grade) {
+      const data = loadData();
+      
+      if (!data.grades[homeworkId]) {
+        data.grades[homeworkId] = {};
+      }
+      
+      data.grades[homeworkId][student] = grade;
+      saveData(data);
+      
+      // Update both teacher and student views
+      renderSubmissions(homeworkId);
+      
+      // If student is viewing their submission, update it
+      if (student === currentUser) {
+        renderMySubmission(homeworkId);
+      } else {
+        // If another student is viewing their grades, update if they're looking at this homework
+        const studentView = document.getElementById(`my-submission-${homeworkId}`);
+        if (studentView) {
+          renderMySubmission(homeworkId);
+        }
+      }
+      
+      alert(`Marked as ${grade} for ${student}`);
+    }
+    
+    // Render student's own submission
+    function renderMySubmission(homeworkId) {
+      const data = loadData();
+      const container = document.getElementById(`my-submission-${homeworkId}`);
+      if (!container) return;
+      
+      const submissions = data.submissions[homeworkId] || [];
+      const mySubmission = submissions.find(sub => sub.student === currentUser);
+      const grade = data.grades[homeworkId]?.[currentUser];
+      
+      if (!mySubmission) {
+        container.innerHTML = "";
+        return;
+      }
+      
+      container.innerHTML = `
+        <div class="submission">
+          <div class="grade-status ${grade || ''}">
+            ${grade === 'correct' ? '✓' : grade === 'wrong' ? '✗' : ''}
+          </div>
+          <h4>Your Submission:</h4>
+          <p>${mySubmission.answer}</p>
+          <small>Submitted on ${new Date(mySubmission.date).toLocaleString()}</small>
+          ${grade ? `
+            <p style="margin-top: 10px;">
+              <strong>Grade:</strong> 
+              <span class="${grade}">
+                ${grade === 'correct' ? 'Correct ✓' : 'Wrong ✗'}
+              </span>
+            </p>
+          ` : '<p>Not graded yet</p>'}
+        </div>
+      `;
+    }
+    
+    // Initialize the app
+    document.addEventListener("DOMContentLoaded", function() {
+      applyTheme();
+      document.getElementById("loginBtn").addEventListener("click", login);
+    });
   </script>
 </body>
 </html>
