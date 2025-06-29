@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Homework Portal</title>
+  <title>Homework Portal with Grading</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -38,12 +38,40 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      margin-right: 5px;
     }
     .submission {
       margin: 10px 0;
       padding: 10px;
       background: #f9f9f9;
       border-left: 3px solid #4CAF50;
+      position: relative;
+    }
+    .grade-buttons {
+      margin-top: 10px;
+    }
+    .grade-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+    .correct-btn {
+      background: #4CAF50;
+    }
+    .wrong-btn {
+      background: #f44336;
+    }
+    .grade-status {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .correct {
+      color: #4CAF50;
+    }
+    .wrong {
+      color: #f44336;
     }
   </style>
 </head>
@@ -85,7 +113,8 @@
       const data = JSON.parse(localStorage.getItem(dbKey));
       return data || {
         homeworks: [],
-        submissions: {}
+        submissions: {},
+        grades: {} // Added to store grades
       };
     }
     
@@ -113,12 +142,22 @@
       if (!title || !content) return alert("Please fill all fields");
       
       const data = loadData();
+      const homeworkId = Date.now();
       data.homeworks.push({
-        id: Date.now(),
+        id: homeworkId,
         title,
         content,
         date: new Date().toISOString()
       });
+      
+      // Initialize submissions and grades for this homework
+      if (!data.submissions[homeworkId]) {
+        data.submissions[homeworkId] = [];
+      }
+      if (!data.grades[homeworkId]) {
+        data.grades[homeworkId] = {};
+      }
+      
       saveData(data);
       
       document.getElementById("homeworkTitle").value = "";
@@ -206,15 +245,44 @@
       if (!container) return;
       
       const submissions = data.submissions[homeworkId] || [];
+      const grades = data.grades[homeworkId] || {};
+      
       container.innerHTML = submissions.length ? 
-        submissions.map(sub => `
-          <div class="submission">
-            <strong>${sub.student}</strong>
-            <p>${sub.answer}</p>
-            <small>${new Date(sub.date).toLocaleString()}</small>
-          </div>
-        `).join("") :
+        submissions.map(sub => {
+          const grade = grades[sub.student];
+          return `
+            <div class="submission">
+              <div class="grade-status ${grade || ''}">
+                ${grade === 'correct' ? '✓' : grade === 'wrong' ? '✗' : ''}
+              </div>
+              <strong>${sub.student}</strong>
+              <p>${sub.answer}</p>
+              <small>${new Date(sub.date).toLocaleString()}</small>
+              ${currentUser === "teacher" ? `
+                <div class="grade-buttons">
+                  <button class="grade-btn correct-btn" onclick="gradeSubmission(${homeworkId}, '${sub.student}', 'correct')">Mark Correct</button>
+                  <button class="grade-btn wrong-btn" onclick="gradeSubmission(${homeworkId}, '${sub.student}', 'wrong')">Mark Wrong</button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join("") :
         "<p>No submissions yet</p>";
+    }
+    
+    function gradeSubmission(homeworkId, student, grade) {
+      const data = loadData();
+      if (!data.grades[homeworkId]) {
+        data.grades[homeworkId] = {};
+      }
+      data.grades[homeworkId][student] = grade;
+      saveData(data);
+      renderSubmissions(homeworkId);
+      
+      // If student is viewing their own submission, update their view
+      if (student === currentUser) {
+        renderMySubmission(homeworkId);
+      }
     }
     
     function renderMySubmission(homeworkId) {
@@ -224,12 +292,17 @@
       
       const submissions = data.submissions[homeworkId] || [];
       const mySubmission = submissions.find(sub => sub.student === currentUser);
+      const grade = data.grades[homeworkId]?.[currentUser];
       
       container.innerHTML = mySubmission ? `
         <div class="submission">
+          <div class="grade-status ${grade || ''}">
+            ${grade === 'correct' ? '✓' : grade === 'wrong' ? '✗' : ''}
+          </div>
           <h4>Your Submission:</h4>
           <p>${mySubmission.answer}</p>
           <small>Submitted on ${new Date(mySubmission.date).toLocaleString()}</small>
+          ${grade ? `<p>Grade: <strong class="${grade}">${grade === 'correct' ? 'Correct ✓' : 'Wrong ✗'}</strong></p>` : ''}
         </div>
       ` : "";
     }
