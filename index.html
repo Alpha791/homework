@@ -10,13 +10,21 @@
   --panel: #fff;
   --primary: #4CAF50;
   --secondary: #2196F3;
+  --text-color: #000;
+  --bg-dark: #333;
+  --panel-dark: #444;
+  --text-color-dark: #fff;
 }
+
 body {
   font-family: Arial, sans-serif;
   background: var(--bg);
+  color: var(--text-color);
   margin: 0; padding: 0;
 }
+
 .container { max-width: 900px; margin: auto; padding: 20px; }
+
 .panel {
   background: var(--panel);
   padding: 20px;
@@ -24,32 +32,71 @@ body {
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   margin-bottom: 20px;
 }
+
 input, textarea, select, button {
   width: 100%; padding: 10px; margin: 8px 0;
   border: 1px solid #ccc; border-radius: 4px;
 }
+
 button {
   background: var(--primary);
   color: white; border: none; cursor: pointer;
 }
+
 button:hover { opacity: 0.9; }
+
 .hidden { display: none; }
+
 .submission {
   background: #f9f9f9;
   padding: 10px; border-radius: 5px;
   margin-top: 10px;
 }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #2196F3;
+  color: white;
+  padding: 10px 20px;
+}
+
+header img {
+  width: 50px;
+  height: 50px;
+  margin-right: 20px;
+}
+
+#themeDropdown {
+  background-color: white;
+  border: none;
+  padding: 5px;
+  cursor: pointer;
+}
+
+#themeDropdown:hover {
+  opacity: 0.8;
+}
 </style>
 </head>
 <body>
-<div class="container">
-  <h1 style="text-align:center;">Homework Portal</h1>
+<header>
+  <div>
+    <img src="https://via.placeholder.com/50" alt="School Logo">
+    <h1 onclick="showLogin()" style="cursor: pointer;">Homework Portal</h1>
+  </div>
+  <select id="themeDropdown" onchange="toggleTheme()">
+    <option value="light">Light Mode</option>
+    <option value="dark">Dark Mode</option>
+  </select>
+</header>
 
+<div class="container">
   <!-- Login -->
   <div id="loginPanel" class="panel">
     <h2>Login</h2>
     <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
     <small>New user? <a href="#" onclick="showRegister()">Register here</a></small>
   </div>
@@ -58,7 +105,6 @@ button:hover { opacity: 0.9; }
   <div id="registerPanel" class="panel hidden">
     <h2>Register</h2>
     <input id="regUsername" placeholder="Username">
-    <input id="regPassword" type="password" placeholder="Password">
     <select id="regRole">
       <option value="student">Student</option>
       <option value="teacher">Teacher</option>
@@ -70,9 +116,11 @@ button:hover { opacity: 0.9; }
   <!-- Teacher Panel -->
   <div id="teacherPanel" class="panel hidden">
     <h2>Post Homework</h2>
+    <input id="subject" placeholder="Subject Offered">
     <input id="hwTitle" placeholder="Homework Title">
     <textarea id="hwDesc" rows="4" placeholder="Homework Details"></textarea>
-    <button onclick="postHomework()">Post</button>
+    <input type="file" id="fileUpload" accept="image/*">
+    <button onclick="postHomework()">Post Homework</button>
     <h2>Your Homeworks</h2>
     <div id="teacherHomeworkList"></div>
   </div>
@@ -97,32 +145,44 @@ function saveDB(db) {
   localStorage.setItem(dbKey, JSON.stringify(db));
 }
 
+// Toggle between light and dark modes
+function toggleTheme() {
+  let theme = document.getElementById("themeDropdown").value;
+  if (theme === "dark") {
+    document.documentElement.style.setProperty('--bg', var(--bg-dark));
+    document.documentElement.style.setProperty('--panel', var(--panel-dark));
+    document.documentElement.style.setProperty('--text-color', var(--text-color-dark));
+  } else {
+    document.documentElement.style.setProperty('--bg', '#f4f4f4');
+    document.documentElement.style.setProperty('--panel', '#fff');
+    document.documentElement.style.setProperty('--text-color', '#000');
+  }
+}
+
 // Registration
 function register() {
   let username = document.getElementById("regUsername").value.trim();
-  let password = document.getElementById("regPassword").value.trim();
   let role = document.getElementById("regRole").value;
 
-  if (!username || !password) return alert("Fill all fields");
+  if (!username) return alert("Fill all fields");
 
   let db = loadDB();
   if (db.users.some(u => u.username === username)) {
     return alert("Username already exists");
   }
 
-  db.users.push({ username, password: btoa(password), role });
+  db.users.push({ username, role });
   saveDB(db);
   alert("Registration successful");
   showLogin();
 }
 
-// Login
+// Login (for students with no password)
 function login() {
   let username = document.getElementById("username").value.trim();
-  let password = document.getElementById("password").value.trim();
 
   let db = loadDB();
-  let user = db.users.find(u => u.username === username && u.password === btoa(password));
+  let user = db.users.find(u => u.username === username);
   if (!user) return alert("Invalid login");
 
   currentUser = user;
@@ -131,30 +191,36 @@ function login() {
 
   if (user.role === "teacher") {
     document.getElementById("teacherPanel").classList.remove("hidden");
-    renderTeacherHomeworks();
   } else {
     document.getElementById("studentPanel").classList.remove("hidden");
     renderStudentHomeworks();
   }
 }
 
-// Post Homework
+// Post Homework (with image upload)
 function postHomework() {
   let title = document.getElementById("hwTitle").value.trim();
   let desc = document.getElementById("hwDesc").value.trim();
-  if (!title || !desc) return alert("Fill both fields");
+  let subject = document.getElementById("subject").value.trim();
+  let file = document.getElementById("fileUpload").files[0];
+
+  if (!title || !desc || !subject) return alert("Fill all fields");
 
   let db = loadDB();
-  let hw = {
+  let homework = {
     id: Date.now(),
-    title, desc,
+    title, desc, subject,
     teacher: currentUser.username,
-    submissions: []
+    submissions: [],
+    file: file ? URL.createObjectURL(file) : null // Store image URL
   };
-  db.homeworks.push(hw);
+  db.homeworks.push(homework);
   saveDB(db);
+
+  // Clear form
   document.getElementById("hwTitle").value = "";
   document.getElementById("hwDesc").value = "";
+  document.getElementById("subject").value = "";
   renderTeacherHomeworks();
 }
 
@@ -166,9 +232,13 @@ function renderTeacherHomeworks() {
   db.homeworks.filter(h => h.teacher === currentUser.username).forEach(hw => {
     let div = document.createElement("div");
     div.className = "submission";
-    div.innerHTML = `<strong>${hw.title}</strong><p>${hw.desc}</p>
-    <h4>Submissions:</h4>
-    ${hw.submissions.length ? hw.submissions.map(s => `<p><b>${s.student}</b>: ${s.answer}</p>`).join("") : "<em>No submissions</em>"}`;
+    div.innerHTML = `
+      <strong>${hw.title}</strong>
+      <p>${hw.desc}</p>
+      <p><strong>Subject:</strong> ${hw.subject}</p>
+      ${hw.file ? `<img src="${hw.file}" width="100" height="100">` : ""}
+      <h4>Submissions:</h4>
+      ${hw.submissions.length ? hw.submissions.map(s => `<p><b>${s.student}</b>: ${s.answer} - <button onclick="markWork(${hw.id}, '${s.student}', 'correct')">Mark Correct</button> <button onclick="markWork(${hw.id}, '${s.student}', 'wrong')">Mark Wrong</button></p>`).join("") : "<em>No submissions</em>"}`;
     list.appendChild(div);
   });
 }
@@ -181,39 +251,7 @@ function renderStudentHomeworks() {
   db.homeworks.forEach(hw => {
     let div = document.createElement("div");
     div.className = "submission";
-    div.innerHTML = `<strong>${hw.title}</strong><p>${hw.desc}</p>
-    <textarea id="ans-${hw.id}" placeholder="Your answer"></textarea>
-    <button onclick="submitAnswer(${hw.id})">Submit</button>`;
-    list.appendChild(div);
-  });
-}
-
-// Submit answer
-function submitAnswer(hwId) {
-  let answer = document.getElementById(`ans-${hwId}`).value.trim();
-  if (!answer) return alert("Write an answer");
-
-  let db = loadDB();
-  let hw = db.homeworks.find(h => h.id === hwId);
-  let existing = hw.submissions.find(s => s.student === currentUser.username);
-  if (existing) {
-    existing.answer = answer;
-  } else {
-    hw.submissions.push({ student: currentUser.username, answer });
-  }
-  saveDB(db);
-  alert("Answer submitted");
-}
-
-// Show register/login
-function showRegister() {
-  document.getElementById("loginPanel").classList.add("hidden");
-  document.getElementById("registerPanel").classList.remove("hidden");
-}
-function showLogin() {
-  document.getElementById("registerPanel").classList.add("hidden");
-  document.getElementById("loginPanel").classList.remove("hidden");
-}
-</script>
-</body>
-  </html>
+    div.innerHTML = `
+      <strong>${hw.title}</strong>
+      <p>${hw.desc}</p>
+      <p><
